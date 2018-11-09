@@ -1,5 +1,6 @@
 package randommathart;
 
+//TODO difference between PanelIcon and ImagePanel?
 import java.awt.image.BufferedImage;
 
 public class PanelIcon {

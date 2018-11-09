@@ -12,16 +12,15 @@ public class MathTree {
     private Tree redTree;
     private Tree greenTree;
     private Tree blueTree;
+    private Tree[] trees;   //TODO IMPLEMENT ANY NUMBER OF TREES, user of class can say how many trees they want and what they map to (CMY, RGBA, etc)
     
-    private Random r;
+    private Random rng;
     
     private static final int MAX_NODES = 12000;
-    
-    private static final boolean DEBUG = false;
-    
+        
     public MathTree() {
         this.generateTrees();
-        r = new Random(System.currentTimeMillis());
+        rng = new Random(System.currentTimeMillis());
     }
     
     private void generateTrees() {
@@ -38,7 +37,7 @@ public class MathTree {
     }
     
     private void populateTreeAt(Node node, Tree tree) {
-        r = new Random(); 
+        rng = new Random(); 
         //while (tree.numberOfNodes() < this.maxNodes) {
         boolean done = false;
         for (int loop = 0; loop < 8 && !done; loop++) {    
@@ -47,10 +46,10 @@ public class MathTree {
             if (tree.numberOfNodes() <= MathTree.MAX_NODES) {
                 Node[] leaves = tree.getLeaves();
                 
-                int numberOfNodesToAdd = r.nextInt(1) + 1;
+                int numberOfNodesToAdd = rng.nextInt(1) + 1;
                 
-                int whichLeafToAddTo = r.nextInt(leaves.length);
-                if (r.nextBoolean()) {
+                int whichLeafToAddTo = rng.nextInt(leaves.length);
+                if (rng.nextBoolean()) {
                     leaves[whichLeafToAddTo].addNode(new Node(MathOp.Pi));
                 }
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
@@ -63,7 +62,7 @@ public class MathTree {
                 Node[] leaves = tree.getLeaves();
                 for (Node n : leaves) {
                     
-                    int numberOfNodesToAdd = r.nextInt(4) + 1;
+                    int numberOfNodesToAdd = rng.nextInt(4) + 1;
                     
                     for (int i = 1; i <= numberOfNodesToAdd; i++) {
                         n.addNode(new Node(getEndMathOp()));
@@ -76,7 +75,7 @@ public class MathTree {
             Node[] leaves = tree.getLeaves();
             for (Node n : leaves) {
 
-                int numberOfNodesToAdd = r.nextInt(4) + 1;
+                int numberOfNodesToAdd = rng.nextInt(4) + 1;
 
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
                     n.addNode(new Node(getEndMathOp()));
@@ -112,7 +111,7 @@ public class MathTree {
     }
     
     public MathOp getEndMathOp() {
-        int n = r.nextInt(3);
+        int n = rng.nextInt(3);
         MathOp op = MathOp.X;
         switch (n) {
             case 0: op = MathOp.Y; break;
@@ -125,7 +124,7 @@ public class MathTree {
     
     //TODO : replace with percent weights for each category
     public MathOp getRandomMathOp() {
-        int n = r.nextInt(11);
+        int n = rng.nextInt(11);
         MathOp op = MathOp.X;
         switch (n) {
             case 0: op = MathOp.Sin; break;
@@ -202,6 +201,10 @@ public class MathTree {
         this.y = y;
     }
     
+    /**
+     * gets the double r,g,b and converts it into a int color for the picture?
+     * @return 
+     */
     public int getRGB() {
         if (redTree == null || greenTree == null || blueTree == null) {
             System.out.println("ONE OR MORE TREES ARE NULL!");

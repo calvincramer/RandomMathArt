@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
+//TODO difference between PanelIcon and ImagePanel?
 public class ImagePanel extends JPanel{
 
     private BufferedImage image;

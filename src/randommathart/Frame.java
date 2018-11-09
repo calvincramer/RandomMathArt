@@ -20,24 +20,26 @@ import javax.swing.border.LineBorder;
 
 public class Frame extends JFrame {
     
-    private int numOfPictures;      //counter variable for the number of picutes generated
-    private boolean running;        //is generating new pictures or not
-    private ImagePanel[] panels;
-    private final PanelIcon[] icons;
-    private Timer timer;
-    private final RandomMathArt rma;
-    
+    private final RandomMathArt rma;//to generate the math pictures
+        
     //some colors
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
-    private static final Color GREY = new Color(90, 90, 90);
+    private static final Color GRAY = new Color(90, 90, 90);
     
-    private static final int ICON_RESOLUTION = 200;     //the preview icon size in pixels
-    
-    private static final int TICK_TIME = 400;        //clock speed in ms
+    private int numOfPictures = 0;  //counter variable for the number of picutes generated
+    private boolean running;        //is generating new pictures or not
+    private Timer timer;            //for the tick to get the next mathpicture every TICK_TIME ms
+
+    private ImagePanel[] panels;    //the 15 panels that show the icons of the math pictures
+    private final PanelIcon[] icons;//TODO: what is panels use and icons use? Should they be combined?
     
     private static final LineBorder SELECTED_PANEL_BORDER = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
-    private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GREY, 1, false);
+    private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GRAY, 1, false);
 
+    //important options
+    private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
+    private static final int TICK_TIME = 1000;       //clock speed in ms
+    
     /**
      * Construct a frame to generate random math art
      */
@@ -52,46 +54,58 @@ public class Frame extends JFrame {
         int y = (height / 2) - (this.getHeight() / 2);
         this.setBounds(x, y, this.getWidth(), this.getHeight());
         
+        //initialize the random math art generator
         rma = new RandomMathArt();
-        numOfPictures = 0;
+        
+        //TODO: purpose of icons?
         icons = new PanelIcon[15];
-        
-        running = false;
-        
+ 
         //start timer
+        running = false;
+        restartTimer();
+        
+    }
+    
+    /**
+     * Reinitialized the timer
+     */
+    private void restartTimer() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override public void run() {
                 tick();
             }
-        }, TICK_TIME, TICK_TIME);
+        }, 0, TICK_TIME);
     }
     
+    /**
+     * Initialize the frame components
+     */
     private void myInitComponents() {
         mainPanel = new JPanel();
         numOfPicturesLabel = new JTextField();
         exportSizeLabel = new JLabel();
         resolutionTextField = new JTextField();
-        jMenuBar1 = new JMenuBar();
+        menuBar = new JMenuBar();
         startStopButton = new JMenu();
         exportButton = new JMenu();
         printTreeButton = new JMenu();
         exitButton = new JMenu();
 
         this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        this.setTitle("Mathematical Pictures");
+        this.setTitle("Random Math Art");
         this.setMinimumSize(new Dimension(1044, 600));
         this.setResizable(false);
-        this.getContentPane().setBackground(GREY);
+        this.getContentPane().setBackground(GRAY);
 
         FlowLayout mainPanelLayout = new FlowLayout(FlowLayout.CENTER);
         mainPanel.setLayout(mainPanelLayout);
-        mainPanel.setBorder(new LineBorder(GREY, 1, false));
+        mainPanel.setBorder(new LineBorder(GRAY, 1, false));
         mainPanel.setMinimumSize(new Dimension (1044, 634));
         mainPanel.setMaximumSize(new Dimension (1044, 634));
         mainPanel.setPreferredSize(new Dimension (1044, 634));
         
-        mainPanel.setBackground(GREY);
+        mainPanel.setBackground(GRAY);
         
         panels = new ImagePanel[15];
         for (int i = 0; i < panels.length; i++) {
@@ -102,7 +116,7 @@ public class Frame extends JFrame {
             panels[i].setMinimumSize(new Dimension(200, 200));
             panels[i].setBorder(DESELECTED_PANEL_BORDER);
             
-            panels[i].setBackground(GREY);
+            panels[i].setBackground(GRAY);
 
             mainPanel.add(panels[i]);
         }
@@ -268,7 +282,7 @@ public class Frame extends JFrame {
                 startStopButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(startStopButton);
+        menuBar.add(startStopButton);
 
         exportButton.setText("Export Photos");
         exportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -276,7 +290,7 @@ public class Frame extends JFrame {
                 exportButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(exportButton);
+        menuBar.add(exportButton);
 
         printTreeButton.setText("Print Tree");
         printTreeButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -284,7 +298,7 @@ public class Frame extends JFrame {
                 printTreeButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(printTreeButton);
+        menuBar.add(printTreeButton);
         
         exitButton.setText("Exit");
         exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -292,9 +306,9 @@ public class Frame extends JFrame {
                 exitButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(exitButton);
+        menuBar.add(exitButton);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(menuBar);
         
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -327,28 +341,21 @@ public class Frame extends JFrame {
     
     /**
      * Main tick to create a new math picture and to shift everything?
+     * Automatically exports images that run "off" the screen and are selected
      */
     public void tick() {
         if (!running) 
             return;
         
-        //System.out.println("tick...");
-        
-        numOfPictures++;
-        numOfPicturesLabel.setText("Pictures: " + numOfPictures);
-        
-        //create new random math picture
-        rma.createNewMathTree();
-        BufferedImage image = rma.createPicture(ICON_RESOLUTION);
-        PanelIcon icon = new PanelIcon(rma.getMathTree(), image);
-        
-        PanelIcon pan = icons[icons.length - 1];
+        //last panel icon, export if it is selected
+        PanelIcon pan = icons[icons.length - 1];    
         if (pan != null && pan.isSelected()) {
-            timer.cancel();
+            timer.cancel();     //stop the time when we are exporting the image, then resume after
             
             rma.setMathTree(pan.getMathTree());
             BufferedImage i = rma.createPicture(1920);      //TODO this should be set by resolutionTextField
             
+            //export image
             try {
                 RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, 1920, 1080), "picture" + numOfPictures);  //TODO square resolution.
             } catch (IOException ex) {
@@ -356,14 +363,20 @@ public class Frame extends JFrame {
                 ex.printStackTrace();
             }
             
+            restartTimer();
         }
         
-        //TODO: WHAT DOES THIS PART DO CALVIN?
+        //shift all of the icons one forward, except for the 0th icon
         for(int i = icons.length - 1; i > 0; i--) {
             icons[i] = icons[i-1];
             icons[i-1] = null;
         }
-        icons[0] = icon;
+        
+        //create new random math picture
+        rma.createNewMathTree();
+        BufferedImage image = rma.createPicture(ICON_RESOLUTION);
+        PanelIcon icon = new PanelIcon(rma.getMathTree(), image);
+        icons[0] = icon;    //set 0th icon to the new picture
         
         //TODO WHAT ABOUT THESE?
         for (int i = 0; i < panels.length; i++) {
@@ -385,43 +398,50 @@ public class Frame extends JFrame {
             }
         }
         
+        //Update number of pictures generated label
+        numOfPictures++;
+        numOfPicturesLabel.setText("Pictures: " + numOfPictures);
+        
         //update frame to reflect changes
         this.repaint();
     }
     
-    //TODO why does this only call right click?
+    /**
+     * Left click of a panel event, toggles selection of the panel
+     * @param index the index of the panel/icon that was right clicked
+     */
     private void panelLeftClicked(int index) {
-        //I dont want ability to delete them, if I acidentally left click a good one
-        panelRightClicked(index);
-        
-        /*
-        //delete on left-click code
-        if (index < 0 || index > 14) return;
-        
-        if (icons[index] != null) {
-            icons[index] = null;
-            panels[index].setImage(null);
-            panels[index].setBorder(DESELECTED_PANEL_BORDER);
-            panels[index].repaint();
-        }
-                */
+        togglePanelSelection(index);        
+    }
+    
+    /**
+     * Right click of a panel event
+     * @param index the index of the panel/icon that was right clicked
+     */
+    private void panelRightClicked(int index) {
+        //TODO: preview of math picture as higher resolution (Issue #6)
         
     }
     
-    //TODO left/right click should both call one method called select/deselect or panelClicked since left and right don't do anything different
-    private void panelRightClicked(int index) {
-        //SELECT IT
-        if (index < 0 || index > 14) return;
-        
+    /**
+     * Toggles a panel/icon selected or deselected
+     * @param index the index of the panel/icon that was right clicked
+     */
+    private void togglePanelSelection(int index) {
+        //bounds check
+        if (index < 0 || index >= panels.length) {
+            System.err.println("Cannot toggle selection of panel " + index + " because index is out of range");
+            return;
+        }  
+        //toggle selection
         if (icons[index] != null) {
-            if (icons[index].isSelected()) {
+            if (icons[index].isSelected()) {    //icon/panel is selected, deselect it
                 panels[index].setBorder(DESELECTED_PANEL_BORDER);
                 icons[index].setSelected(false);
-            } else {
+            } else {                            //icon/panel is not selected, select it
                 panels[index].setBorder(SELECTED_PANEL_BORDER);
                 icons[index].setSelected(true);
             }
-            
         }
     }
     
@@ -436,8 +456,10 @@ public class Frame extends JFrame {
 
         return p.getIndex();
     }
-
-    @SuppressWarnings("unchecked")
+    
+    /**
+     * Apparently I used the GUI builder and then copied the code so I was able to change it, so this initComponents is not used.  
+     */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -445,7 +467,7 @@ public class Frame extends JFrame {
         numOfPicturesLabel = new javax.swing.JTextField();
         exportSizeLabel = new javax.swing.JLabel();
         resolutionTextField = new javax.swing.JTextField();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        menuBar = new javax.swing.JMenuBar();
         startStopButton = new javax.swing.JMenu();
         exportButton = new javax.swing.JMenu();
         printTreeButton = new javax.swing.JMenu();
@@ -493,7 +515,7 @@ public class Frame extends JFrame {
                 startStopButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(startStopButton);
+        menuBar.add(startStopButton);
 
         exportButton.setText("Export Photos");
         exportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -501,7 +523,7 @@ public class Frame extends JFrame {
                 exportButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(exportButton);
+        menuBar.add(exportButton);
 
         printTreeButton.setText("Print Tree");
         printTreeButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -509,7 +531,7 @@ public class Frame extends JFrame {
                 printTreeButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(printTreeButton);
+        menuBar.add(printTreeButton);
 
         exitButton.setText("Exit");
         exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -517,9 +539,9 @@ public class Frame extends JFrame {
                 exitButtonMousePressed(evt);
             }
         });
-        jMenuBar1.add(exitButton);
+        menuBar.add(exitButton);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -550,29 +572,42 @@ public class Frame extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Exit button
+     * @param evt the Mouse event passed
+     */
     private void exitButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitButtonMousePressed
         System.exit(0);
     }//GEN-LAST:event_exitButtonMousePressed
 
+    /**
+     * Starts / stops the generating of new math pictures
+     * @param evt the Mouse event passed
+     */
     private void startStopButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startStopButtonMousePressed
-        if (running) {
-            running = false;
-        } else {
-            running = true;
-        }
+        running = !running;
     }//GEN-LAST:event_startStopButtonMousePressed
 
+    /**
+     * TODO: implement the export button (Issue #7)
+     * @param evt the Mouse event passed
+     */
     private void exportButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportButtonMousePressed
-        // TODO add your handling code here:
+        System.out.println("EXPORT BUTTON DOES NOTHING RIGHT NOW");
     }//GEN-LAST:event_exportButtonMousePressed
 
+    /**
+     * Prints the math trees for each of the icons/panels
+     * @param evt the Mouse event passed
+     */
     private void printTreeButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printTreeButtonMousePressed
-        if (icons != null) {
-            for (int i = 0; i < icons.length; i++) {
-                if (icons[i] != null) {
-                    icons[i].getMathTree().printTrees();
-                    return;
-                }
+        if (icons == null) 
+            return;
+        
+        for (int i = 0; i < icons.length; i++) {
+            if (icons[i] != null) {
+                icons[i].getMathTree().printTrees();
+                return;
             }
         }
     }//GEN-LAST:event_printTreeButtonMousePressed
@@ -594,8 +629,8 @@ public class Frame extends JFrame {
     private javax.swing.JMenu exitButton;
     private javax.swing.JMenu exportButton;
     private javax.swing.JLabel exportSizeLabel;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JMenuBar menuBar;
     private javax.swing.JTextField numOfPicturesLabel;
     private javax.swing.JMenu printTreeButton;
     private javax.swing.JTextField resolutionTextField;
