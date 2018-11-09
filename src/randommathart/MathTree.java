@@ -1,15 +1,27 @@
 package randommathart;
 
-import java.util.Iterator;
 import java.util.Random;
 
+//TODO generalize to any number of trees
+//TODO DOCUMENTATION
 public class MathTree {
+    
+    private double x;   //what do even x and y do?
+    private double y;
+    
+    private Tree redTree;
+    private Tree greenTree;
+    private Tree blueTree;
+    
+    private Random r;
+    
+    private static final int MAX_NODES = 12000;
+    
+    private static final boolean DEBUG = false;
     
     public MathTree() {
         this.generateTrees();
-        r = new Random();
-        //this.maxNodes = r.nextInt(500) + 30;
-        this.maxNodes = 12000;
+        r = new Random(System.currentTimeMillis());
     }
     
     private void generateTrees() {
@@ -32,7 +44,7 @@ public class MathTree {
         for (int loop = 0; loop < 8 && !done; loop++) {    
             
             
-            if (tree.numberOfNodes() <= maxNodes) {
+            if (tree.numberOfNodes() <= MathTree.MAX_NODES) {
                 Node[] leaves = tree.getLeaves();
                 
                 int numberOfNodesToAdd = r.nextInt(1) + 1;
@@ -46,7 +58,7 @@ public class MathTree {
                 }
             }
             
-            if (tree.numberOfNodes() > maxNodes) {
+            if (tree.numberOfNodes() > MathTree.MAX_NODES) {
                 done = true;
                 Node[] leaves = tree.getLeaves();
                 for (Node n : leaves) {
@@ -111,6 +123,7 @@ public class MathTree {
         return op;
     }
     
+    //TODO : replace with percent weights for each category
     public MathOp getRandomMathOp() {
         int n = r.nextInt(11);
         MathOp op = MathOp.X;
@@ -219,17 +232,4 @@ public class MathTree {
         blueTree.printTree();
         System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
     }
-    
-    private double x;
-    private double y;
-    
-    private Tree redTree;
-    private Tree greenTree;
-    private Tree blueTree;
-    
-    private Random r;
-    
-    private int maxNodes;
-    
-    private static final boolean DEBUG = false;
 }

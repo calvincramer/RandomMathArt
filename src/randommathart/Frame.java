@@ -1,7 +1,6 @@
 package randommathart;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -10,8 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.TimerTask;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -19,11 +18,33 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class Frame extends javax.swing.JFrame {
+public class Frame extends JFrame {
+    
+    private int numOfPictures;      //counter variable for the number of picutes generated
+    private boolean running;        //is generating new pictures or not
+    private ImagePanel[] panels;
+    private final PanelIcon[] icons;
+    private Timer timer;
+    private final RandomMathArt rma;
+    
+    //some colors
+    private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
+    private static final Color GREY = new Color(90, 90, 90);
+    
+    private static final int ICON_RESOLUTION = 200;     //the preview icon size in pixels
+    
+    private static final int TICK_TIME = 400;        //clock speed in ms
+    
+    private static final LineBorder SELECTED_PANEL_BORDER = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
+    private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GREY, 1, false);
 
+    /**
+     * Construct a frame to generate random math art
+     */
     public Frame() {
         myInitComponents();
         
+        //center frame
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) screenSize.getWidth();
         int height = (int) screenSize.getHeight();
@@ -37,8 +58,13 @@ public class Frame extends javax.swing.JFrame {
         
         running = false;
         
+        //start timer
         timer = new Timer();
-        timer.scheduleAtFixedRate(new Notifier(this), TIMER_LENGTH, TIMER_LENGTH);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override public void run() {
+                tick();
+            }
+        }, TICK_TIME, TICK_TIME);
     }
     
     private void myInitComponents() {
@@ -81,8 +107,9 @@ public class Frame extends javax.swing.JFrame {
             mainPanel.add(panels[i]);
         }
         
+        // TODO replace with generic solution
         panels[0].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(0);
                 } else {
@@ -91,7 +118,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[1].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(1);
                 } else {
@@ -100,7 +127,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[2].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(2);
                 } else {
@@ -109,7 +136,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[3].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(3);
                 } else {
@@ -118,7 +145,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[4].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(4);
                 } else {
@@ -127,7 +154,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[5].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(5);
                 } else {
@@ -136,7 +163,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[6].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(6);
                 } else {
@@ -145,7 +172,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[7].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(7);
                 } else {
@@ -154,7 +181,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[8].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(8);
                 } else {
@@ -163,7 +190,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[9].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(9);
                 } else {
@@ -172,7 +199,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[10].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(10);
                 } else {
@@ -181,7 +208,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[11].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(11);
                 } else {
@@ -190,7 +217,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[12].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(12);
                 } else {
@@ -199,7 +226,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[13].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(13);
                 } else {
@@ -208,7 +235,7 @@ public class Frame extends javax.swing.JFrame {
             }
         });
         panels[14].addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent evt) {
+            @Override public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == 1) {
                     panelLeftClicked(14);
                 } else {
@@ -237,7 +264,7 @@ public class Frame extends javax.swing.JFrame {
 
         startStopButton.setText("Start/Stop");
         startStopButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+            @Override public void mousePressed(java.awt.event.MouseEvent evt) {
                 startStopButtonMousePressed(evt);
             }
         });
@@ -245,7 +272,7 @@ public class Frame extends javax.swing.JFrame {
 
         exportButton.setText("Export Photos");
         exportButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+            @Override public void mousePressed(java.awt.event.MouseEvent evt) {
                 exportButtonMousePressed(evt);
             }
         });
@@ -253,7 +280,7 @@ public class Frame extends javax.swing.JFrame {
 
         printTreeButton.setText("Print Tree");
         printTreeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+            @Override public void mousePressed(java.awt.event.MouseEvent evt) {
                 printTreeButtonMousePressed(evt);
             }
         });
@@ -261,7 +288,7 @@ public class Frame extends javax.swing.JFrame {
         
         exitButton.setText("Exit");
         exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+            @Override public void mousePressed(java.awt.event.MouseEvent evt) {
                 exitButtonMousePressed(evt);
             }
         });
@@ -298,14 +325,19 @@ public class Frame extends javax.swing.JFrame {
         pack();
     }    
     
+    /**
+     * Main tick to create a new math picture and to shift everything?
+     */
     public void tick() {
-        if (!running) return;
+        if (!running) 
+            return;
         
         //System.out.println("tick...");
         
         numOfPictures++;
         numOfPicturesLabel.setText("Pictures: " + numOfPictures);
         
+        //create new random math picture
         rma.createNewMathTree();
         BufferedImage image = rma.createPicture(ICON_RESOLUTION);
         PanelIcon icon = new PanelIcon(rma.getMathTree(), image);
@@ -315,29 +347,31 @@ public class Frame extends javax.swing.JFrame {
             timer.cancel();
             
             rma.setMathTree(pan.getMathTree());
-            BufferedImage i = rma.createPicture(1920);
+            BufferedImage i = rma.createPicture(1920);      //TODO this should be set by resolutionTextField
             
             try {
-                RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, 1920, 1080), "picture" + numOfPictures);
+                RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, 1920, 1080), "picture" + numOfPictures);  //TODO square resolution.
             } catch (IOException ex) {
+                System.err.println("Error exporting image");
                 ex.printStackTrace();
             }
             
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new Notifier(this), TIMER_LENGTH, TIMER_LENGTH);
         }
         
+        //TODO: WHAT DOES THIS PART DO CALVIN?
         for(int i = icons.length - 1; i > 0; i--) {
             icons[i] = icons[i-1];
             icons[i-1] = null;
         }
         icons[0] = icon;
         
+        //TODO WHAT ABOUT THESE?
         for (int i = 0; i < panels.length; i++) {
             if (icons[i] == null) panels[i].setImage(null);
             else panels[i].setImage(icons[i].getImage());
         }
         
+        //TODO AND THESE?
         for (int i = 0; i < panels.length; i++) {
             if (icons[i] != null) {
                 if (icons[i].isSelected()) {
@@ -350,10 +384,12 @@ public class Frame extends javax.swing.JFrame {
                 
             }
         }
-        this.repaint();
         
+        //update frame to reflect changes
+        this.repaint();
     }
     
+    //TODO why does this only call right click?
     private void panelLeftClicked(int index) {
         //I dont want ability to delete them, if I acidentally left click a good one
         panelRightClicked(index);
@@ -372,6 +408,7 @@ public class Frame extends javax.swing.JFrame {
         
     }
     
+    //TODO left/right click should both call one method called select/deselect or panelClicked since left and right don't do anything different
     private void panelRightClicked(int index) {
         //SELECT IT
         if (index < 0 || index > 14) return;
@@ -388,6 +425,11 @@ public class Frame extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * TODO: INSERT COMMENTS
+     * @param evt
+     * @return 
+     */
     private int getPanelAt(MouseEvent evt) {
         ImagePanel p = (ImagePanel) mainPanel.getComponentAt(evt.getPoint());
         System.out.println(p.toString());
@@ -535,31 +577,19 @@ public class Frame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_printTreeButtonMousePressed
 
+    /**
+     * Starting point
+     * @param args no use
+     */
     public static void main(String args[]) {
+        //TODO why invoke a different thread?
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 new Frame().setVisible(true);
             }
         });
     }
     
-    private int numOfPictures;
-    private boolean running;
-    private ImagePanel[] panels;
-    private PanelIcon[] icons;
-    private Timer timer;
-    private RandomMathArt rma;
-    
-    private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
-    private static final Color GREY = new Color(90, 90, 90);
-    private static final int ICON_RESOLUTION = 200;
-    
-    private static final int TIMER_LENGTH = 400;
-    
-    private static final LineBorder SELECTED_PANEL_BORDER = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
-    private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GREY, 1, false);
-    
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu exitButton;
     private javax.swing.JMenu exportButton;

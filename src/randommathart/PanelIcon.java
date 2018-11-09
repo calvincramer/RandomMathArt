@@ -26,11 +26,13 @@ public class PanelIcon {
         this.selected = selected;
     }
     
+    @Override
     public String toString() {
         return "I";
     }
-    private BufferedImage image;
-    private MathTree mathTree;
+    
+    private final BufferedImage image;
+    private final MathTree mathTree;
     private boolean selected;
 
 }

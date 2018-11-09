@@ -1,8 +1,13 @@
 package randommathart;
 
-import java.util.ArrayList;
-
+//TODO DOCUMENTATION
 public class Node {
+    
+    private Tree tree;
+    private Node parentNode;
+    private Node[] childNodes;
+    
+    private MathOp op; 
     
     public Node(Tree tree, Node parentNode, MathOp op) {
         this.tree = tree;
@@ -86,6 +91,7 @@ public class Node {
         return childNodes[index];
     }
     
+    //TODO rename this function to something appropriate
     public void setOtherNodes(Node[] otherNodes) {
         this.childNodes = otherNodes;
     }
@@ -94,7 +100,7 @@ public class Node {
         
         if (op == MathOp.X) return tree.getX();
         if (op == MathOp.Y) return tree.getY();  
-        if (op == MathOp.Pi)return RandomMathArt.pi;
+        if (op == MathOp.Pi)return RandomMathArt.PI;
            
         if (op == MathOp.Avg) {
             double sumTotal = 0;
@@ -198,6 +204,7 @@ public class Node {
         return s;
     }
     
+    //TODO why is this function necessary?
     public String mathFunctionToString() {
         return "" + op;
     }
@@ -205,9 +212,4 @@ public class Node {
     public static Node getStandardBaseNode() {
         return new Node(null, null, MathOp.Base);
     }
-    
-    private Tree tree;
-    private MathOp op; 
-    private Node parentNode;
-    private Node[] childNodes;
 }

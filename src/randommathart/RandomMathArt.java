@@ -8,8 +8,40 @@ import java.io.IOException;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
+//TODO DOCUMENTATION
 public class RandomMathArt {
 
+    private MathTree mathTree;
+    protected static final double PI = 3.141592653589793238;
+      
+    /**
+     * Another start point, which start point should we use?
+     * TODO: CHOOSE START POINT
+     * @param args 
+     */
+    public static void main(String[] args) {
+        RandomMathArt rma = new RandomMathArt();
+        System.out.println("Enter a number (1 quits)");
+        
+        Scanner in = new Scanner(System.in);
+        int num = in.nextInt();
+        
+        while (num != 1) {
+            rma.createNewMathTree();
+            rma.getMathTree().printTrees();
+            BufferedImage i = rma.createPicture(1000);
+            try {
+                File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\" + "testingPicture.png");
+                ImageIO.write(i, "png", outputfile);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            num = in.nextInt();
+        }
+        
+    }
+    
     public RandomMathArt() {
         //nuthing? 
         
@@ -23,7 +55,8 @@ public class RandomMathArt {
         if (mathTree == null) {
             throw new NullPointerException("MATHTREE IS NULL YOU DUMMY!");
         }
-        if (resolution < 0) resolution = 200;
+        if (resolution < 0) 
+            resolution = 200;
         
         BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.OPAQUE);
 
@@ -68,7 +101,7 @@ public class RandomMathArt {
         return bilinearScaleOp.filter(
             image,
             new BufferedImage(width, height, image.getType()));
-}
+    }
     
     public MathTree getMathTree() {
         return mathTree;
@@ -121,31 +154,4 @@ public class RandomMathArt {
         }
         */
     }
-    
-    public static void main(String[] args) {
-        RandomMathArt rma = new RandomMathArt();
-        System.out.println("Enter a number (1 quits)");
-        
-        Scanner in = new Scanner(System.in);
-        int num = in.nextInt();
-        
-        while (num != 1) {
-            rma.createNewMathTree();
-            rma.getMathTree().printTrees();
-            BufferedImage i = rma.createPicture(1000);
-            try {
-                File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\" + "testingPicture.png");
-                ImageIO.write(i, "png", outputfile);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            num = in.nextInt();
-        }
-        
-    }
-    
-    private MathTree mathTree;
-    protected static final double pi = 3.141592653589793238;
-    
 }

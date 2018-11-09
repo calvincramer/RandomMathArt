@@ -7,7 +7,7 @@ public class Tree {
     
     public Tree(Node motherNode, MathTree mathTree) {
         this.motherNode = motherNode;
-        this.motherNode.setTree(this);
+        this.motherNode.setTree(this);      //leaking this?
         this.mathTree = mathTree;
     }
 

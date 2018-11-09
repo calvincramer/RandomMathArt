@@ -22,6 +22,7 @@ public class ImagePanel extends JPanel{
         return index;
     }
 
+    //TODO  can do antialiasing here?
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
