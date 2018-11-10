@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 //TODO DOCUMENTATION
 public class RandomMathArt {
 
-    private MathTree mathTree;
+    private MathTree mt;
     protected static final double PI = 3.141592653589793238;
       
     /**
@@ -48,11 +48,11 @@ public class RandomMathArt {
     }
     
     public void createNewMathTree() {
-        mathTree = new MathTree();
+        mt = new MathTree(3, "red", "green", "blue");
     }
     
     public BufferedImage createPicture(int resolution) {
-        if (mathTree == null) {
+        if (mt == null) {
             throw new NullPointerException("MATHTREE IS NULL YOU DUMMY!");
         }
         if (resolution < 0) 
@@ -67,8 +67,8 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                mathTree.setCoord(xCoord, yCoord);
-                image.setRGB(x, y, mathTree.getRGB());
+                mt.setCoord(xCoord, yCoord);
+                image.setRGB(x, y, MathTree.getRGB(mt.getTree("red"), mt.getTree("green"), mt.getTree("blue")));
             }
         }
         
@@ -104,15 +104,15 @@ public class RandomMathArt {
     }
     
     public MathTree getMathTree() {
-        return mathTree;
+        return mt;
     }
 
     public void setMathTree(MathTree mathTree) {
-        this.mathTree = mathTree;
+        this.mt = mathTree;
     }
     
     private void debugStuff() {
-        MathTree mathTree = new MathTree();
+        MathTree mathTree = new MathTree(1, "r");
         Tree redTestTree = new Tree(Node.getStandardBaseNode(), mathTree);
         redTestTree.getMotherNode().addNode(new Node(MathOp.Cos));
         redTestTree.getMotherNode().addNode(new Node(MathOp.Sin));
@@ -131,21 +131,21 @@ public class RandomMathArt {
         redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addNode(n);
                 
         
-        mathTree.setRedTree(redTestTree);
+        mathTree.setTree("r", redTestTree);
         System.out.println("RED TEST TREE: ");
-        mathTree.getRedTree().printTree();
+        mathTree.getTree("r").printTree();
         
         System.out.println();
         
-        Node[] firstChildren = mathTree.getRedTree().getMotherNode().getChildNodes();
+        Node[] firstChildren = mathTree.getTree("r").getMotherNode().getChildNodes();
         System.out.println("Children of motherNode:");
         for (Node node : firstChildren) {
             System.out.println("   " + node.toString());
         }
         System.out.println("Leaves are full? : " + mathTree.lookForFullLeaves(redTestTree.getMotherNode()));
-        System.out.println("Mothernode a leaf? " + mathTree.getRedTree().getMotherNode().isLeaf());
-        System.out.println("Number of nodes: "  + mathTree.getRedTree().numberOfNodes());
-        Node[] leaves = mathTree.getRedTree().getLeaves();
+        System.out.println("Mothernode a leaf? " + mathTree.getTree("r").getMotherNode().isLeaf());
+        System.out.println("Number of nodes: "  + mathTree.getTree("r").numberOfNodes());
+        Node[] leaves = mathTree.getTree("r").getLeaves();
         System.out.println("Number of leaves: " + leaves.length);
         /*
         System.out.println("Leaves: ");

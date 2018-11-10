@@ -1,5 +1,7 @@
 package randommathart;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 //TODO generalize to any number of trees
@@ -9,35 +11,56 @@ public class MathTree {
     private double x;   //what do even x and y do?
     private double y;
     
-    private Tree redTree;
-    private Tree greenTree;
-    private Tree blueTree;
-    private Tree[] trees;   //TODO IMPLEMENT ANY NUMBER OF TREES, user of class can say how many trees they want and what they map to (CMY, RGBA, etc)
+    //private Tree redTree;
+    //private Tree greenTree;
+    //private Tree blueTree;
+    private Tree[] trees;       //all trees
+    private Map<String, Integer> treeNameMap;   //name of tree to integer 
     
     private Random rng;
     
     private static final int MAX_NODES = 12000;
         
-    public MathTree() {
-        this.generateTrees();
+    public MathTree(int numTrees, String... treeNames) {
         rng = new Random(System.currentTimeMillis());
+        
+        if (treeNames.length != numTrees) {
+            System.out.println("Need to supply the same number of treeNames as there are trees");
+            return;
+        }
+        if (numTrees < 1)
+            numTrees = 1;
+        
+        //make map and name map
+        this.trees = new Tree[numTrees];
+        this.treeNameMap = new HashMap<>();
+        for (int i = 0; i < numTrees; i++) {
+            this.treeNameMap.put(treeNames[i], i);
+        }
+        
+        
+        this.generateTrees();
     }
     
+    /**
+     * Generates the entire array of trees
+     */
     private void generateTrees() {
-        redTree = new Tree(Node.getStandardBaseNode(), this);
-        greenTree = new Tree(Node.getStandardBaseNode(), this);
-        blueTree = new Tree(Node.getStandardBaseNode(), this);
-        generateRandomTree(redTree);
-        generateRandomTree(greenTree);
-        generateRandomTree(blueTree);
+        for (int i = 0; i < trees.length; i++) {
+            trees[i] = new Tree(Node.getStandardBaseNode(), this);
+            generateRandomTree(trees[i]);
+        }
     }
     
+    /**
+     * Generates a single tree
+     * @param tree the tree to be populated
+     */
     private void generateRandomTree(Tree tree) {
         populateTreeAt(tree.getMotherNode(), tree);
     }
     
     private void populateTreeAt(Node node, Tree tree) {
-        rng = new Random(); 
         //while (tree.numberOfNodes() < this.maxNodes) {
         boolean done = false;
         for (int loop = 0; loop < 8 && !done; loop++) {    
@@ -144,40 +167,58 @@ public class MathTree {
         return op;
     }
     
-    public Tree getRedTree() {
-        if (redTree == null) {
-            System.out.println("RED TREE IS NULL YOU DUMMY");
-            System.exit(0);
+    /**
+     * Gets a tree from an index value
+     * @param treeIndex
+     * @return 
+     */
+    public Tree getTree(int treeIndex) {
+        if (treeIndex < 0 || treeIndex >= this.trees.length) {
+            System.out.println("Tree index is out of bounds");
+            return null;
         }
-        return redTree;
+        return this.trees[treeIndex];
     }
-
-    public void setRedTree(Tree redTree) {
-        this.redTree = redTree;
+    
+    /**
+     * Gets a tree from the tree name
+     * Will return null if the treeName is not found in the treeName map
+     * @param treeName
+     * @return 
+     */
+    public Tree getTree(String treeName) {
+        Integer index = this.treeNameMap.get(treeName);
+        if (index == null)
+            return null;
+        return this.trees[index];
     }
-
-    public Tree getGreenTree() {
-        if (greenTree == null) {
-            System.out.println("GREEN TREE IS NULL YOU DUMMY");
-            System.exit(0);
+    
+    /**
+     * Sets a tree at the specified index
+     * @param treeIndex
+     * @param tree
+     * @return 
+     */
+    public boolean setTree(int treeIndex, Tree tree) {
+        if (treeIndex < 0 || treeIndex >= this.trees.length) {
+            System.out.println("Tree index is out of bounds");
+            return false;
         }
-        return greenTree;
+        this.trees[treeIndex] = tree;
+        return true;
     }
-
-    public void setGreenTree(Tree greenTree) {
-        this.greenTree = greenTree;
-    }
-
-    public Tree getBlueTree() {
-        if (blueTree == null) {
-            System.out.println("BLUE TREE IS NULL YOU DUMMY");
-            System.exit(0);
-        }
-        return blueTree;
-    }
-
-    public void setBlueTree(Tree blueTree) {
-        this.blueTree = blueTree;
+    
+    /**
+     * Sets a tree given the tree name
+     * @param treeName
+     * @param tree
+     * @return 
+     */
+    public boolean setTree(String treeName, Tree tree) {
+        Integer index = this.treeNameMap.get(treeName);
+        if (index == null)
+            return false;
+        return setTree(index, tree);
     }
 
     public double getX() {
@@ -201,11 +242,24 @@ public class MathTree {
         this.y = y;
     }
     
+    
+    
+    /**
+     * Prints all of the trees associated with this math tree 
+     */
+    public void printTrees(){
+        for (String treeName : this.treeNameMap.keySet()) {
+            System.out.println(treeName + " tree: ");
+            this.trees[this.treeNameMap.get(treeName)].printTree();
+        }
+        System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
+    }
+    
     /**
      * gets the double r,g,b and converts it into a int color for the picture?
      * @return 
      */
-    public int getRGB() {
+    public static int getRGB(Tree redTree, Tree greenTree, Tree blueTree) {
         if (redTree == null || greenTree == null || blueTree == null) {
             System.out.println("ONE OR MORE TREES ARE NULL!");
             if (redTree == null) System.out.println("redTree is null");
@@ -224,15 +278,5 @@ public class MathTree {
         rgb = (rgb << 8) + g;
         rgb = (rgb << 8) + b;
         return rgb;
-    }
-    
-    public void printTrees(){
-        System.out.println("Red tree: ");
-        redTree.printTree();
-        System.out.println("Green tree: ");
-        greenTree.printTree();
-        System.out.println("Blue tree: ");
-        blueTree.printTree();
-        System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
     }
 }
