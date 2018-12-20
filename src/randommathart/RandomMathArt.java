@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
@@ -13,6 +14,7 @@ import javax.imageio.ImageIO;
 public class RandomMathArt {
 
     private MathTrees mt;
+    
     
     /**
      * For debugging, creased a random image and outputs it to desktop
@@ -110,50 +112,5 @@ public class RandomMathArt {
     
     public void setMathTree(MathTrees mathTree) {
         this.mt = mathTree;
-    }
-    
-    
-    private void debugStuff() {
-        MathTrees mathTree = new MathTrees("r");
-        Tree redTestTree = new Tree(Node.getStandardBaseNode(), mathTree);
-        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Cos));
-        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Avg));
-        redTestTree.getMotherNode().getNode(0).addChildNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(0).addChildNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(1).addChildNode(new Node(MathOp.Pi_Factor));
-        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Pi_Factor));
-        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Pi_Factor));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addChildNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addChildNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addChildNode(new Node(MathOp.X));
-        Node n = new Node(MathOp.X);
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addChildNode(n);
-                
-        
-        mathTree.setTree("r", redTestTree);
-        System.out.println("RED TEST TREE: ");
-        mathTree.getTree("r").printTree();
-        
-        System.out.println();
-        
-        List<Node> firstChildren = mathTree.getTree("r").getMotherNode().getChildNodes();
-        System.out.println("Children of motherNode:");
-        for (Node node : firstChildren) {
-            System.out.println("   " + node.toString());
-        }
-        System.out.println("Leaves are full? : " + mathTree.lookForFullLeaves(redTestTree.getMotherNode()));
-        System.out.println("Mothernode a leaf? " + mathTree.getTree("r").getMotherNode().isLeaf());
-        System.out.println("Number of nodes: "  + mathTree.getTree("r").numberOfNodes());
-        Node[] leaves = mathTree.getTree("r").getLeaves();
-        System.out.println("Number of leaves: " + leaves.length);
-        /*
-        System.out.println("Leaves: ");
-        for (Node node : leaves) {
-            System.out.println("   " + node.toString());
-        }
-        */
     }
 }

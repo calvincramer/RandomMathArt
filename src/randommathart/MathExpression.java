@@ -15,6 +15,7 @@ public class MathExpression {
     
     private List<MathTerm> terms;   //reverse polish notation list of terms?
     
+    
     /**
      * Generates a new random math expression
      */
@@ -23,16 +24,51 @@ public class MathExpression {
         this.generateRandomExpression();
     }
     
+    
     public double evaluateExpression() {
         //DONT USE MATH TERM, JUST A NUMBER TO REPRESENT EACH TERM, except for random num
         return Double.NaN;
     }
     
+    
     private void generateRandomExpression() {
         //TODO
+        //overview of design:
+        //generate all the non-terminating terms first, keep placeholders for terminating terms
+        //at each step when adding non-terminating terms, choose a placeholder for where to add
+        //then place all terminating terms in
+        
+        //start with _ _ +
+        //then _ _ * _ +
+        //then _ _ * _ sin +
+        
+        //placeholder = MathTerm.PLACEHOLDER
     }
     
-    private
+    
+    /**
+     * Returns a list of either _ _ +, _ _ *, _ sin, _ cos, _ tan, _ _ pow
+     * where _ is MathTerm.PLACEHOLDER
+     * @return a list of either _ _ +, _ _ *, _ sin, _ cos, _ tan, _ _ pow
+     */
+    private List<MathTerm> getRandomSmallExpression() {
+        List<MathTerm> temp = new ArrayList<>();
+        MathTerm rand_non_term = MathTerm.getRandomNonTerminatingTerm();
+        int type = rand_non_term.getType();
+        
+        //add placeholders
+        if (type == MathTerm.SIN || type == MathTerm.COS || type == MathTerm.TAN) {
+            temp.add(new MathTerm(MathTerm.PLACEHOLDER));
+        }
+        else {
+            temp.add(new MathTerm(MathTerm.PLACEHOLDER));
+            temp.add(new MathTerm(MathTerm.PLACEHOLDER));
+        }
+        
+        temp.add(rand_non_term);
+        return temp;
+    }
+    
     
     //<editor-fold defaultstate="collapsed" desc="Getters, setters">
     public double getX() {
@@ -51,6 +87,12 @@ public class MathExpression {
     
     
     public void setY(double y) {
+        this.y = y;
+    }
+    
+    
+    public void setCoord(double x, double y) {
+        this.x = x;
         this.y = y;
     }
     //</editor-fold>

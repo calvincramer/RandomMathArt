@@ -1,11 +1,109 @@
 package randommathart;
 
+import java.util.Random;
+
 /**
  * Represents a single math term
  * @author CalvinLaptop
  */
-public abstract class MathTerm {
+public class MathTerm {
+    //terminating types
+    public static final int NUMBER = 0;
+    public static final int X      = 1;
+    public static final int Y      = 2;
+    //non-terminating types
+    public static final int ADD    = 3;
+    public static final int MULT   = 4;
+    public static final int SIN    = 5;
+    public static final int COS    = 6;
+    public static final int TAN    = 7;
+    public static final int POW    = 8;
+    //only used when generating a random expression
+    public static final int PLACEHOLDER = 300; 
     
-    //evaluate this expression to a number
-    public abstract double evaluate();
+    public static final int MAX_TYPES = 9;
+    
+    private double num; //used only if type is NUMBER
+    private int type;   //stores the type of the term
+    
+    private static Random rng = new Random(System.currentTimeMillis());
+    
+    
+    /**
+     * Constructs a term given the type
+     * @param typeOfTerm the type
+     */
+    public MathTerm(int typeOfTerm) {
+        this.type = typeOfTerm;
+        this.num = Double.NaN;
+    }
+    
+    
+    /**
+     * Constructs a term that is a number
+     * @param num the number
+     */
+    public MathTerm(double num) {
+        this.num = num;
+        this.type = NUMBER;
+    }
+    
+    
+    /**
+     * Returns the number for this term
+     * @return number will be NaN if type != NUMBER
+     */
+    public double getNumber() {
+        return this.num;
+    }
+    
+    
+    /**
+     * Returns the type of this term
+     * @return the type of this term
+     */
+    public int getType() {
+        return this.type;
+    }
+    
+    
+    /**
+     * Returns a random term
+     * @return Returns a random term
+     */
+    public static MathTerm getRandomTerm() {
+        int rand_type = rng.nextInt(MAX_TYPES);
+        if (rand_type != 0)
+            return new MathTerm(rand_type);
+        else {
+            double rand_num = rng.nextDouble() * Math.PI;
+            return new MathTerm(rand_num);
+        }
+    }
+    
+    
+    /**
+     * Returns either NUMBER, X, or Y
+     * @return Returns either NUMBER, X, or Y
+     */
+    public static MathTerm getRandomTerminatingTerm() {
+        int rand_type = rng.nextInt(3); //can be num, X, or Y
+        if (rand_type != 0)
+            return new MathTerm(rand_type);
+        else {
+            double rand_num = rng.nextDouble() * Math.PI;
+            return new MathTerm(rand_num);
+        }
+    }
+    
+    
+    /**
+     * Returns a random non-terminating math term
+     * A non terminating math term is either +, *, sin, cos, tan, or pow
+     * @return Returns a random non-terminating math term
+     */
+    public static MathTerm getRandomNonTerminatingTerm() {
+        int rand_type = rng.nextInt(8 - 3 + 1) + 3;     //needs to be in range [3,8] inclusive
+        return new MathTerm(rand_type);
+    }
 }
