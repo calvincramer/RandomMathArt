@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -37,8 +39,16 @@ public class Frame extends JFrame {
     private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GRAY, 1, false);
 
     //important options
+<<<<<<< HEAD
     private static final int ICON_RESOLUTION = 100; //the preview icon size in pixels
     private static final int TICK_TIME = 2500;       //clock speed in ms
+=======
+    private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
+    private static final int TICK_TIME = 400;       //clock speed in ms
+    private static final int NUM_PANELS = 15;
+    
+    private boolean spacebarPressed = false;
+>>>>>>> 8864f1b59adc25a8c58e35d3a8788695a50bb9b5
     
     /**
      * Construct a frame to generate random math art
@@ -58,7 +68,7 @@ public class Frame extends JFrame {
         rma = new RandomMathArt();
         
         //TODO: purpose of icons?
-        icons = new PanelIcon[15];
+        icons = new PanelIcon[NUM_PANELS];
  
         //start timer
         running = false;
@@ -96,7 +106,19 @@ public class Frame extends JFrame {
         this.setTitle("Random Math Art");
         this.setMinimumSize(new Dimension(1044, 600));
         this.setResizable(false);
+        this.setFocusable(true);
+        this.setFocusTraversalKeysEnabled(false);
         this.getContentPane().setBackground(GRAY);
+        
+        //keyboard listener
+        this.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e) {
+                keyPressedEvent(e);
+            }
+            @Override public void keyReleased(KeyEvent e) {
+                keyReleasedEvent(e);
+            }
+        });
 
         FlowLayout mainPanelLayout = new FlowLayout(FlowLayout.CENTER);
         mainPanel.setLayout(mainPanelLayout);
@@ -107,7 +129,7 @@ public class Frame extends JFrame {
         
         mainPanel.setBackground(GRAY);
         
-        panels = new ImagePanel[15];
+        panels = new ImagePanel[NUM_PANELS];
         for (int i = 0; i < panels.length; i++) {
             panels[i] = new ImagePanel(null, i);
             panels[i].setMinimumSize(new Dimension (200, 200));
@@ -366,6 +388,8 @@ public class Frame extends JFrame {
             
             restartTimer();
         }
+
+        
         
         //shift all of the icons one forward, except for the 0th icon
         for(int i = icons.length - 1; i > 0; i--) {
@@ -405,6 +429,30 @@ public class Frame extends JFrame {
         
         //update frame to reflect changes
         this.repaint();
+    }
+    
+    /**
+     * For when any button is pressed down
+     * @param e the KeyEvent
+     */
+    private void keyPressedEvent(KeyEvent e) {
+        //check if spacebar pressed
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (this.spacebarPressed == false)
+                running = !running;
+            this.spacebarPressed = true;
+        }
+    }
+    
+    /**
+     * For when any button is released
+     * @param e the KeyEvent
+     */
+    private void keyReleasedEvent(KeyEvent e) {
+        //check if spacebar released
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            this.spacebarPressed = false;
+        }
     }
     
     /**
@@ -451,12 +499,14 @@ public class Frame extends JFrame {
      * @param evt
      * @return 
      */
+    /*
     private int getPanelAt(MouseEvent evt) {
         ImagePanel p = (ImagePanel) mainPanel.getComponentAt(evt.getPoint());
         System.out.println(p.toString());
 
         return p.getIndex();
     }
+    */
     
     /**
      * Apparently I used the GUI builder and then copied the code so I was able to change it, so this initComponents is not used.  
@@ -478,6 +528,11 @@ public class Frame extends JFrame {
         setTitle("Mathematical Pictures");
         setMinimumSize(new java.awt.Dimension(1044, 600));
         setResizable(false);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         mainPanel.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -612,6 +667,10 @@ public class Frame extends JFrame {
             }
         }
     }//GEN-LAST:event_printTreeButtonMousePressed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formKeyPressed
 
     /**
      * Gets the export resolution from the text field
