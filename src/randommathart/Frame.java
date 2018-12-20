@@ -37,8 +37,8 @@ public class Frame extends JFrame {
     private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GRAY, 1, false);
 
     //important options
-    private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
-    private static final int TICK_TIME = 1000;       //clock speed in ms
+    private static final int ICON_RESOLUTION = 100; //the preview icon size in pixels
+    private static final int TICK_TIME = 2500;       //clock speed in ms
     
     /**
      * Construct a frame to generate random math art
@@ -353,11 +353,12 @@ public class Frame extends JFrame {
             timer.cancel();     //stop the time when we are exporting the image, then resume after
             
             rma.setMathTree(pan.getMathTree());
-            BufferedImage i = rma.createPicture(1920);      //TODO this should be set by resolutionTextField
+            BufferedImage i = rma.createPicture(getExportResolution());      //TODO this should be set by resolutionTextField
             
             //export image
             try {
-                RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, 1920, 1080), "picture" + numOfPictures);  //TODO square resolution.
+                RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, getExportResolution(), getExportResolution()), 
+                        "picture" + numOfPictures);
             } catch (IOException ex) {
                 System.err.println("Error exporting image");
                 ex.printStackTrace();
@@ -374,7 +375,7 @@ public class Frame extends JFrame {
         
         //create new random math picture
         rma.createNewMathTree();
-        BufferedImage image = rma.createPicture(ICON_RESOLUTION);
+        BufferedImage image = rma.createPicture(getExportResolution());
         PanelIcon icon = new PanelIcon(rma.getMathTree(), image);
         icons[0] = icon;    //set 0th icon to the new picture
         
@@ -612,6 +613,21 @@ public class Frame extends JFrame {
         }
     }//GEN-LAST:event_printTreeButtonMousePressed
 
+    /**
+     * Gets the export resolution from the text field
+     * @return the number in the text field, or 1920 if the text is not a number
+     */
+    private int getExportResolution() {
+        String s = this.resolutionTextField.getText();
+        try {
+            this.resolutionTextField.setBorder(new LineBorder(Color.BLACK, 1));
+            return Integer.parseInt(s);
+        }
+        catch (NumberFormatException e) {
+            this.resolutionTextField.setBorder(new LineBorder(Color.RED, 2));
+            return 1920;
+        }
+    }
     /**
      * Starting point
      * @param args no use

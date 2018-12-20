@@ -1,8 +1,12 @@
 package randommathart;
 
 //TODO DOCUMENTATION
+
+import java.util.Random;
+
 public class Node {
     
+    private static Random rng = new Random(System.currentTimeMillis());
     private Tree tree;
     private Node parentNode;
     private Node[] childNodes;
@@ -101,7 +105,7 @@ public class Node {
         if (op == MathOp.X) return tree.getX();
         if (op == MathOp.Y) return tree.getY();  
         if (op == MathOp.Pi)return RandomMathArt.PI;
-           
+        if (op == MathOp.Random)    return Math.PI / (rng.nextInt(5) + 1);
         if (op == MathOp.Avg) {
             double sumTotal = 0;
             for (Node node : this.getChildNodes()) {

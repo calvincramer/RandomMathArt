@@ -1,6 +1,9 @@
 package randommathart;
 
-//TODO WHAT IS THIS FOR?
+/**
+ * Represents the different math elements possible
+ * @author CalvinLaptop
+ */
 public enum MathOp {
     Sin, 
     Cos, 
@@ -8,5 +11,6 @@ public enum MathOp {
     X, 
     Y, 
     Pi, 
+    Random,
     Base
 }

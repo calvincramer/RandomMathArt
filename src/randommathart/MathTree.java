@@ -16,7 +16,8 @@ public class MathTree {
     
     private Random rng;
     
-    private static final int MAX_NODES = 12000;
+    private static final int MAX_NODES = 5;
+    private static final int NUM_NODES_ADD_PER_LOOP = 3;
         
     public MathTree() {
         this.generateTrees();
@@ -40,18 +41,19 @@ public class MathTree {
         rng = new Random(); 
         //while (tree.numberOfNodes() < this.maxNodes) {
         boolean done = false;
+        //MAGIC NUMBER: 8
         for (int loop = 0; loop < 8 && !done; loop++) {    
             
             
             if (tree.numberOfNodes() <= MathTree.MAX_NODES) {
                 Node[] leaves = tree.getLeaves();
                 
-                int numberOfNodesToAdd = rng.nextInt(1) + 1;
+                int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
                 
                 int whichLeafToAddTo = rng.nextInt(leaves.length);
-                if (rng.nextBoolean()) {
-                    leaves[whichLeafToAddTo].addNode(new Node(MathOp.Pi));
-                }
+                //if (rng.nextBoolean()) {
+                //    leaves[whichLeafToAddTo].addNode(new Node(MathOp.Random));
+                //}
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
                     leaves[whichLeafToAddTo].addNode(new Node(getRandomMathOp()));
                 }
@@ -62,7 +64,7 @@ public class MathTree {
                 Node[] leaves = tree.getLeaves();
                 for (Node n : leaves) {
                     
-                    int numberOfNodesToAdd = rng.nextInt(4) + 1;
+                    int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
                     
                     for (int i = 1; i <= numberOfNodesToAdd; i++) {
                         n.addNode(new Node(getEndMathOp()));
@@ -75,7 +77,7 @@ public class MathTree {
             Node[] leaves = tree.getLeaves();
             for (Node n : leaves) {
 
-                int numberOfNodesToAdd = rng.nextInt(4) + 1;
+                int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
 
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
                     n.addNode(new Node(getEndMathOp()));
@@ -111,34 +113,29 @@ public class MathTree {
     }
     
     public MathOp getEndMathOp() {
-        int n = rng.nextInt(3);
+        int n = rng.nextInt(4);
         MathOp op = MathOp.X;
         switch (n) {
             case 0: op = MathOp.Y; break;
             case 1: op = MathOp.X; break;
             case 2: op = MathOp.Pi; break;
+            case 3: op = MathOp.Random; break;
             default: System.out.println("n = " + n + "   (which isn't good!)"); break;
         }
         return op;
     }
     
+    
     //TODO : replace with percent weights for each category
     public MathOp getRandomMathOp() {
-        int n = rng.nextInt(11);
+        int n = rng.nextInt(5);
         MathOp op = MathOp.X;
         switch (n) {
             case 0: op = MathOp.Sin; break;
             case 1: op = MathOp.Cos; break;
             case 2: op = MathOp.Avg; break;
-            case 3: op = MathOp.Sin; break;
-            case 4: op = MathOp.Cos; break;
-            case 5: op = MathOp.Avg; break;
-            case 6: op = MathOp.Pi; break;
-            case 7: op = MathOp.Pi; break;
-            case 8: op = MathOp.Pi; break;
-            case 9: op = MathOp.Pi; break;
-            case 10: op = MathOp.Pi; break;
-
+            case 3: op = MathOp.Pi; break;
+            case 4: op = MathOp.Random; break;
             default: System.out.println("n = " + n + "   (which isn't good!)"); break;
         }
         return op;
