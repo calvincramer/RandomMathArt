@@ -5,12 +5,5 @@ package randommathart;
  * @author CalvinLaptop
  */
 public enum MathOp {
-    Sin, 
-    Cos, 
-    Avg, 
-    X, 
-    Y, 
-    Pi_Factor, //pi divided by some integer
-    Random,
-    Base
+    Plus, Minus, Mult, Div
 }
