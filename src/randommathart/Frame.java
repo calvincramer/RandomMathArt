@@ -39,16 +39,11 @@ public class Frame extends JFrame {
     private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GRAY, 1, false);
 
     //important options
-<<<<<<< HEAD
-    private static final int ICON_RESOLUTION = 100; //the preview icon size in pixels
-    private static final int TICK_TIME = 2500;       //clock speed in ms
-=======
     private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
     private static final int TICK_TIME = 400;       //clock speed in ms
     private static final int NUM_PANELS = 15;
     
     private boolean spacebarPressed = false;
->>>>>>> 8864f1b59adc25a8c58e35d3a8788695a50bb9b5
     
     /**
      * Construct a frame to generate random math art

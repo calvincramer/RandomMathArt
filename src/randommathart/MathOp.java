@@ -10,7 +10,7 @@ public enum MathOp {
     Avg, 
     X, 
     Y, 
-    Pi, 
+    Pi_Factor, //pi divided by some integer
     Random,
     Base
 }

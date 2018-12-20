@@ -5,19 +5,19 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 //TODO DOCUMENTATION
 public class RandomMathArt {
 
-    private MathTree mt;
+    private MathTrees mt;
     protected static final double PI = 3.141592653589793238;
       
     /**
-     * Another start point, which start point should we use?
-     * TODO: CHOOSE START POINT
-     * @param args 
+     * For debugging, creased a random image and outputs it to desktop
+     * @param args unused
      */
     public static void main(String[] args) {
         RandomMathArt rma = new RandomMathArt();
@@ -42,13 +42,8 @@ public class RandomMathArt {
         
     }
     
-    public RandomMathArt() {
-        //nuthing? 
-        
-    }
-    
     public void createNewMathTree() {
-        mt = new MathTree(3, "red", "green", "blue");
+        mt = new MathTrees("red", "green", "blue");
     }
     
     public BufferedImage createPicture(int resolution) {
@@ -67,8 +62,9 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                mt.setCoord(xCoord, yCoord);
-                image.setRGB(x, y, MathTree.getRGB(mt.getTree("red"), mt.getTree("green"), mt.getTree("blue")));
+                image.setRGB(x, y, 
+                        MathTrees.getRGB(mt.getTree("red"), mt.getTree("green"), mt.getTree("blue"), xCoord, yCoord)
+                );
             }
         }
         
@@ -103,32 +99,32 @@ public class RandomMathArt {
             new BufferedImage(width, height, image.getType()));
     }
     
-    public MathTree getMathTree() {
+    public MathTrees getMathTree() {
         return mt;
     }
 
-    public void setMathTree(MathTree mathTree) {
+    public void setMathTree(MathTrees mathTree) {
         this.mt = mathTree;
     }
     
     private void debugStuff() {
-        MathTree mathTree = new MathTree(1, "r");
+        MathTrees mathTree = new MathTrees("r");
         Tree redTestTree = new Tree(Node.getStandardBaseNode(), mathTree);
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Cos));
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Avg));
-        redTestTree.getMotherNode().getNode(0).addNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(0).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(1).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addNode(new Node(MathOp.X));
+        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Cos));
+        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Sin));
+        redTestTree.getMotherNode().addChildNode(new Node(MathOp.Avg));
+        redTestTree.getMotherNode().getNode(0).addChildNode(new Node(MathOp.X));
+        redTestTree.getMotherNode().getNode(0).addChildNode(new Node(MathOp.Y));
+        redTestTree.getMotherNode().getNode(1).addChildNode(new Node(MathOp.Pi_Factor));
+        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.X));
+        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Y));
+        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Pi_Factor));
+        redTestTree.getMotherNode().getNode(2).addChildNode(new Node(MathOp.Pi_Factor));
+        redTestTree.getMotherNode().getNode(0).getNode(0).addChildNode(new Node(MathOp.Sin));
+        redTestTree.getMotherNode().getNode(0).getNode(0).addChildNode(new Node(MathOp.Y));
+        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addChildNode(new Node(MathOp.X));
         Node n = new Node(MathOp.X);
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addNode(n);
+        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addChildNode(n);
                 
         
         mathTree.setTree("r", redTestTree);
@@ -137,7 +133,7 @@ public class RandomMathArt {
         
         System.out.println();
         
-        Node[] firstChildren = mathTree.getTree("r").getMotherNode().getChildNodes();
+        List<Node> firstChildren = mathTree.getTree("r").getMotherNode().getChildNodes();
         System.out.println("Children of motherNode:");
         for (Node node : firstChildren) {
             System.out.println("   " + node.toString());

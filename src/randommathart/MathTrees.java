@@ -6,14 +6,11 @@ import java.util.Random;
 
 //TODO generalize to any number of trees
 //TODO DOCUMENTATION
-public class MathTree {
+public class MathTrees {
     
-    private double x;   //what do even x and y do?
-    private double y;
+    //private double x;   //what do even x and y do?
+    //private double y;
     
-    //private Tree redTree;
-    //private Tree greenTree;
-    //private Tree blueTree;
     private Tree[] trees;       //all trees
     private Map<String, Integer> treeNameMap;   //name of tree to integer 
     
@@ -22,23 +19,15 @@ public class MathTree {
     private static final int MAX_NODES = 5;
     private static final int NUM_NODES_ADD_PER_LOOP = 3;
         
-    public MathTree(int numTrees, String... treeNames) {
+    public MathTrees(String... treeNames) {
         rng = new Random(System.currentTimeMillis());
         
-        if (treeNames.length != numTrees) {
-            System.out.println("Need to supply the same number of treeNames as there are trees");
-            return;
-        }
-        if (numTrees < 1)
-            numTrees = 1;
-        
         //make map and name map
-        this.trees = new Tree[numTrees];
+        this.trees = new Tree[treeNames.length];
         this.treeNameMap = new HashMap<>();
-        for (int i = 0; i < numTrees; i++) {
+        for (int i = 0; i < treeNames.length; i++) {
             this.treeNameMap.put(treeNames[i], i);
         }
-        
         
         this.generateTrees();
     }
@@ -68,7 +57,7 @@ public class MathTree {
         for (int loop = 0; loop < 8 && !done; loop++) {    
             
             
-            if (tree.numberOfNodes() <= MathTree.MAX_NODES) {
+            if (tree.numberOfNodes() <= MathTrees.MAX_NODES) {
                 Node[] leaves = tree.getLeaves();
                 
                 int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
@@ -78,11 +67,11 @@ public class MathTree {
                 //    leaves[whichLeafToAddTo].addNode(new Node(MathOp.Random));
                 //}
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
-                    leaves[whichLeafToAddTo].addNode(new Node(getRandomMathOp()));
+                    leaves[whichLeafToAddTo].addChildNode(new Node(getRandomMathOp()));
                 }
             }
             
-            if (tree.numberOfNodes() > MathTree.MAX_NODES) {
+            if (tree.numberOfNodes() > MathTrees.MAX_NODES) {
                 done = true;
                 Node[] leaves = tree.getLeaves();
                 for (Node n : leaves) {
@@ -90,7 +79,7 @@ public class MathTree {
                     int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
                     
                     for (int i = 1; i <= numberOfNodesToAdd; i++) {
-                        n.addNode(new Node(getEndMathOp()));
+                        n.addChildNode(new Node(getEndMathOp()));
                     }
                 }
             }
@@ -103,7 +92,7 @@ public class MathTree {
                 int numberOfNodesToAdd = rng.nextInt(NUM_NODES_ADD_PER_LOOP) + 1;
 
                 for (int i = 1; i <= numberOfNodesToAdd; i++) {
-                    n.addNode(new Node(getEndMathOp()));
+                    n.addChildNode(new Node(getEndMathOp()));
                 }
             }
         }
@@ -115,14 +104,14 @@ public class MathTree {
      */
     public boolean lookForFullLeaves (Node node){
         MathOp op = node.getMathOp();
-        if (op == MathOp.Base && (node.getChildNodes() == null || node.getChildNodes().length == 0)) return false;
+        if (op == MathOp.Base && (node.getChildNodes() == null || node.getChildNodes().size() == 0)) return false;
         
         if(op == MathOp.Avg || op == MathOp.Sin || op == MathOp.Cos) {
-            if (node.getChildNodes() == null || node.getChildNodes().length == 0) {
+            if (node.getChildNodes() == null || node.getChildNodes().size() == 0) {
                 return false;
             }
         }
-        if (node.getChildNodes() != null && node.getChildNodes().length > 0) {
+        if (node.getChildNodes() != null && node.getChildNodes().size() > 0) {
             boolean result = true;
             for (Node n : node.getChildNodes()) {
                 if (n != null) {
@@ -141,7 +130,7 @@ public class MathTree {
         switch (n) {
             case 0: op = MathOp.Y; break;
             case 1: op = MathOp.X; break;
-            case 2: op = MathOp.Pi; break;
+            case 2: op = MathOp.Pi_Factor; break;
             case 3: op = MathOp.Random; break;
             default: System.out.println("n = " + n + "   (which isn't good!)"); break;
         }
@@ -157,7 +146,7 @@ public class MathTree {
             case 0: op = MathOp.Sin; break;
             case 1: op = MathOp.Cos; break;
             case 2: op = MathOp.Avg; break;
-            case 3: op = MathOp.Pi; break;
+            case 3: op = MathOp.Pi_Factor; break;
             case 4: op = MathOp.Random; break;
             default: System.out.println("n = " + n + "   (which isn't good!)"); break;
         }
@@ -218,6 +207,7 @@ public class MathTree {
         return setTree(index, tree);
     }
 
+    /*
     public double getX() {
         return x;
     }
@@ -238,6 +228,7 @@ public class MathTree {
         this.x = x;
         this.y = y;
     }
+    */
     
     
     
@@ -256,7 +247,7 @@ public class MathTree {
      * gets the double r,g,b and converts it into a int color for the picture?
      * @return 
      */
-    public static int getRGB(Tree redTree, Tree greenTree, Tree blueTree) {
+    public static int getRGB(Tree redTree, Tree greenTree, Tree blueTree, double x, double y) {
         if (redTree == null || greenTree == null || blueTree == null) {
             System.out.println("ONE OR MORE TREES ARE NULL!");
             if (redTree == null) System.out.println("redTree is null");
@@ -264,9 +255,9 @@ public class MathTree {
             if (blueTree == null) System.out.println("blueTree is null");
             System.exit(1);
         }
-        double red = redTree.evaluateTree();
-        double green = greenTree.evaluateTree();
-        double blue = blueTree.evaluateTree();
+        double red = redTree.evaluateTree(x, y);
+        double green = greenTree.evaluateTree(x, y);
+        double blue = blueTree.evaluateTree(x, y);
         
         int r = (int)((red + 1) * (255.0/2));
         int g = (int)((green + 1) * (255.0/2));

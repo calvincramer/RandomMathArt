@@ -2,53 +2,55 @@ package randommathart;
 
 //TODO DOCUMENTATION
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Node {
     
     private static Random rng = new Random(System.currentTimeMillis());
-    private Tree tree;
+    //private Tree tree;
     private Node parentNode;
-    private Node[] childNodes;
-    
+    private List<Node> childNodes;
     private MathOp op; 
     
+    
     public Node(Tree tree, Node parentNode, MathOp op) {
-        this.tree = tree;
+        //this.tree = tree;
         this.parentNode = parentNode;
         this.op = op;
-        this.childNodes = new Node[10];
+        this.childNodes = new ArrayList<>();
     }
     
     public Node(MathOp op) {
-        this.op = op;
-        this.tree = null;
-        this.parentNode = null;
-        this.childNodes = new Node[10];
+        this(null, null, op);
     }
     
-    public void addNode(Node n) {
-        if (childNodes == null) {
-            System.out.println("CHILD NODES IS NULL YOU DUMMY");
-            System.exit(0);
-        }
-        //see if need to expand array
-        if (this.getNumberOfChildren() >= childNodes.length) {
-            Node[] expandedArray = new Node[childNodes.length * 2];
-            for (int i = 0; i < childNodes.length; i++) {
-                expandedArray[i] = childNodes[i];
+    public double evaluate(double x, double y) {
+        
+        if (op == MathOp.X) return x;
+        if (op == MathOp.Y) return y;  
+        if (op == MathOp.Pi_Factor)return RandomMathArt.PI;
+        if (op == MathOp.Random)    return Math.PI / (rng.nextInt(5) + 1);
+        if (op == MathOp.Avg) {
+            double sumTotal = 0;
+            for (Node node : this.getChildNodes()) {
+                sumTotal += node.evaluate(x, y);
             }
-            childNodes = expandedArray;
+            return (sumTotal / childNodes.size());
         }
         
-        int index = 0;
-        while (index < childNodes.length && childNodes[index] != null) {
-            index++;
+        double total = 1;
+        for (Node node : this.getChildNodes()) {
+            total *= node.evaluate(x, y);
         }
-        childNodes[index] = n;
-        n.setParentNode(this);
-        n.setTree(this.tree); 
+        
+        if(op == MathOp.Sin) return Math.sin(total);
+        if(op == MathOp.Cos) return Math.cos(total);
+        
+        return total;
     }
+    
     
     public Node getBaseNode() {
         if (this.parentNode == null) return this;
@@ -60,99 +62,7 @@ public class Node {
         System.out.println("Error in getBaseNode() didn't find base node");
         return null;
     }
-    
-    public void removeAllNodes() {
-        if (childNodes != null) {
-            childNodes = new Node[0];
-        }
-    }
-
-    public Node getParentNode() {
-        return parentNode;
-    }
-
-    public void setParentNode(Node parentNode) {
-        this.parentNode = parentNode;
-    }
-
-    public Node[] getChildNodes() {
-        int numFull = 0;
-        for (Node n : childNodes) {
-            if (n != null) numFull++;
-        }
-        Node[] nodes = new Node[numFull];
-        for (int i = 0; i < numFull; i++) {
-            nodes[i] = childNodes[i];
-        }
-        
-        return nodes;
-    }
-
-    public Node getNode(int index) {
-        if (index < 0 || index > childNodes.length - 1) {
-            System.out.println("INDEX OUT OF BOUNDS : index = " + index + "  length of childNodex = " + childNodes.length);
-        }
-        return childNodes[index];
-    }
-    
-    //TODO rename this function to something appropriate
-    public void setOtherNodes(Node[] otherNodes) {
-        this.childNodes = otherNodes;
-    }
-    
-    public double evaluate() {
-        
-        if (op == MathOp.X) return tree.getX();
-        if (op == MathOp.Y) return tree.getY();  
-        if (op == MathOp.Pi)return RandomMathArt.PI;
-        if (op == MathOp.Random)    return Math.PI / (rng.nextInt(5) + 1);
-        if (op == MathOp.Avg) {
-            double sumTotal = 0;
-            for (Node node : this.getChildNodes()) {
-                sumTotal += node.evaluate();
-            }
-            return (sumTotal / childNodes.length);
-        }
-        
-        double total = 1;
-        for (Node node : this.getChildNodes()) {
-            total *= node.evaluate();
-        }
-        
-        if(op == MathOp.Sin) return Math.sin(total);
-        if(op == MathOp.Cos) return Math.cos(total);
-        
-        
-        return total;
-    }
-    
-    public MathOp getMathOp() {
-        return op;
-    }
-
-    public Tree getTree() {
-        return tree;
-    }
-
-    public boolean isLeaf() {
-        return getNumberOfChildren() == 0;
-    }
-    
-    public int getNumberOfChildren() {
-        int children = 0;
-        for (Node n : childNodes) {
-            if (n != null) children++;
-        }
-        return children;
-    }
-    
-    public void setTree(Tree tree) {
-        this.tree = tree;
-    }
-    
-    /**
-     * works
-     */
+   
     public int getDepth() {
         if (this.getParentNode() == null) {
             return 0;
@@ -167,6 +77,31 @@ public class Node {
         return depth;
     }
     
+    //<editor-fold defaultstate="collapsed" desc="Print functions">
+    /**
+     * Returns a string representation of this node
+     * @return String representation of the node
+     */
+    @Override
+    public String toString() {
+        String s = "[" + op + ", PARENT: ";
+        s += parentNode == null ? "null" : parentNode.getMathOp();
+        if (childNodes != null && childNodes.size() > 0 && this.hasChildren()) {
+            s += ", CHILDREN: ";
+            for (Node n : childNodes) {
+                if (n != null) s += n.getMathOp() + ", ";
+            }
+            s = s.substring(0, s.length() - 2);
+        } else {
+            s += ", LEAF";
+        }
+        s += "]";
+        return s;
+    }
+    
+    /**
+     * Prints the nodes recursively
+     */
     public void printNodes() {
         int depth = this.getDepth();
         String spacing = "";
@@ -180,40 +115,97 @@ public class Node {
             }
         }
     }
+    //</editor-fold>
     
-    public boolean hasChildren() {
-        for (int i = 0; i < childNodes.length; i++) {
-            if (childNodes[i] != null) return true;
-        }
-        return false;
+    //<editor-fold defaultstate="collapsed" desc="Boring getters, setters">
+    /**
+     * Adds a child node
+     * @param n the node to add
+     */
+    public void addChildNode(Node n) {
+        childNodes.add(n);
+        n.setParentNode(this);
+        //n.setTree(this.tree); 
     }
     
     /**
-     * Returns a string representation of this node
+     * Determines whether this node has chidren or not
+     * @return true if there are more than 0 children
      */
-    @Override
-    public String toString() {
-        String s = "[" + op + ", PARENT: ";
-        s += parentNode == null ? "null" : parentNode.getMathOp();
-        if (childNodes != null && childNodes.length > 0 && this.hasChildren()) {
-            s += ", CHILDREN: ";
-            for (Node n : childNodes) {
-                if (n != null) s += n.getMathOp() + ", ";
-            }
-            s = s.substring(0, s.length() - 2);
-        } else {
-            s += ", LEAF";
-        }
-        s += "]";
-        return s;
+    public boolean hasChildren() {
+        return childNodes.size() != 0;
     }
     
-    //TODO why is this function necessary?
-    public String mathFunctionToString() {
-        return "" + op;
+    /**
+     * Sets the tree
+     * @param tree tree to set
+     */
+    /*
+    public void setTree(Tree tree) {
+        this.tree = tree;
+    }
+    */
+    
+    /**
+     * Gives number of children
+     * @return number of children
+     */
+    public int getNumberOfChildren() {
+        return childNodes.size();
+    }
+    
+    /**
+     * Returns the math operation associated with this node
+     * @return the math op
+     */
+    public MathOp getMathOp() {
+        return op;
+    }
+
+    /**
+     * Returns the tree associated with this node
+     * @return 
+     */
+    /*
+    public Tree getTree() {
+        return tree;
+    }
+    */
+    
+    /**
+     * Determines whether this node is a leaf node 
+     * @return true iff a leaf node
+     */
+    public boolean isLeaf() {
+        return getNumberOfChildren() == 0;
+    }
+    
+    /**
+     * Returns the parent node associated with this node
+     * @return the parent node
+     */
+    public Node getParentNode() {
+        return parentNode;
+    }
+    
+    public void setParentNode(Node parentNode) {
+        this.parentNode = parentNode;
+    }
+    
+    public List<Node> getChildNodes() {
+        return childNodes;
+    }
+
+    public Node getNode(int index) {
+        if (index < 0 || index >= childNodes.size()) {
+            System.err.println("INDEX OUT OF BOUNDS");
+            return null;
+        }
+        return childNodes.get(index);
     }
     
     public static Node getStandardBaseNode() {
         return new Node(null, null, MathOp.Base);
     }
+    //</editor-fold>
 }

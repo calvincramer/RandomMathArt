@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class PanelIcon {
     
-    public PanelIcon(MathTree mathTree, BufferedImage image) {
+    public PanelIcon(MathTrees mathTree, BufferedImage image) {
         this.mathTree = mathTree;
         this.image = image;
         this.selected = false;
@@ -15,7 +15,7 @@ public class PanelIcon {
         return image;
     }
 
-    public MathTree getMathTree() {
+    public MathTrees getMathTree() {
         return mathTree;
     }
 
@@ -33,7 +33,7 @@ public class PanelIcon {
     }
     
     private final BufferedImage image;
-    private final MathTree mathTree;
+    private final MathTrees mathTree;
     private boolean selected;
 
 }

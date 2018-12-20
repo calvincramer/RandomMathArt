@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class Tree {
     
     
-    public Tree(Node motherNode, MathTree mathTree) {
+    public Tree(Node motherNode, MathTrees mathTree) {
         this.motherNode = motherNode;
-        this.motherNode.setTree(this);      //leaking this?
+        //this.motherNode.setTree(this);      //leaking this?
         this.mathTree = mathTree;
     }
 
@@ -19,6 +19,7 @@ public class Tree {
         this.motherNode = motherNode;
     }
     
+    /*
     public double getX() {
         return mathTree.getX();
     }
@@ -26,9 +27,10 @@ public class Tree {
     public double getY() {
         return mathTree.getY();
     }
+    */
     
-    public double evaluateTree() {
-        return motherNode.evaluate();
+    public double evaluateTree(double x, double y) {
+        return motherNode.evaluate(x, y);
     }
     
     public void printTree() {
@@ -65,5 +67,5 @@ public class Tree {
     }
     
     private Node motherNode;
-    private MathTree mathTree;
+    private MathTrees mathTree;
 }
