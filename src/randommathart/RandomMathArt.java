@@ -15,6 +15,7 @@ public class RandomMathArt {
     private MathTrees mt;
     protected static final double PI = 3.141592653589793238;
       
+    
     /**
      * For debugging, creased a random image and outputs it to desktop
      * @param args unused
@@ -42,9 +43,11 @@ public class RandomMathArt {
         
     }
     
+    
     public void createNewMathTree() {
         mt = new MathTrees("red", "green", "blue");
     }
+    
     
     public BufferedImage createPicture(int resolution) {
         if (mt == null) {
@@ -71,6 +74,7 @@ public class RandomMathArt {
         return image;
     }
     
+    
     public static void exportImage(BufferedImage image, String imageName) {
         try {
             File test = new File("");
@@ -84,6 +88,7 @@ public class RandomMathArt {
             e.printStackTrace();
         }
     }  
+    
     
     public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
         int imageWidth  = image.getWidth();
@@ -99,13 +104,16 @@ public class RandomMathArt {
             new BufferedImage(width, height, image.getType()));
     }
     
+    
     public MathTrees getMathTree() {
         return mt;
     }
 
+    
     public void setMathTree(MathTrees mathTree) {
         this.mt = mathTree;
     }
+    
     
     private void debugStuff() {
         MathTrees mathTree = new MathTrees("r");

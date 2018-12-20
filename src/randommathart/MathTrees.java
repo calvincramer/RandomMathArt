@@ -4,12 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-//TODO generalize to any number of trees
 //TODO DOCUMENTATION
 public class MathTrees {
-    
-    //private double x;   //what do even x and y do?
-    //private double y;
     
     private Tree[] trees;       //all trees
     private Map<String, Integer> treeNameMap;   //name of tree to integer 
@@ -19,6 +15,7 @@ public class MathTrees {
     private static final int MAX_NODES = 5;
     private static final int NUM_NODES_ADD_PER_LOOP = 3;
         
+    
     public MathTrees(String... treeNames) {
         rng = new Random(System.currentTimeMillis());
         
@@ -32,6 +29,7 @@ public class MathTrees {
         this.generateTrees();
     }
     
+    
     /**
      * Generates the entire array of trees
      */
@@ -42,6 +40,7 @@ public class MathTrees {
         }
     }
     
+    
     /**
      * Generates a single tree
      * @param tree the tree to be populated
@@ -49,6 +48,7 @@ public class MathTrees {
     private void generateRandomTree(Tree tree) {
         populateTreeAt(tree.getMotherNode(), tree);
     }
+    
     
     private void populateTreeAt(Node node, Tree tree) {
         //while (tree.numberOfNodes() < this.maxNodes) {
@@ -99,6 +99,7 @@ public class MathTrees {
 
     }
     
+    
     /**
      * Works for all I know
      */
@@ -123,6 +124,7 @@ public class MathTrees {
         }
         return true;
     }
+    
     
     public MathOp getEndMathOp() {
         int n = rng.nextInt(4);
@@ -153,6 +155,7 @@ public class MathTrees {
         return op;
     }
     
+    
     /**
      * Gets a tree from an index value
      * @param treeIndex
@@ -166,6 +169,7 @@ public class MathTrees {
         return this.trees[treeIndex];
     }
     
+    
     /**
      * Gets a tree from the tree name
      * Will return null if the treeName is not found in the treeName map
@@ -178,6 +182,7 @@ public class MathTrees {
             return null;
         return this.trees[index];
     }
+    
     
     /**
      * Sets a tree at the specified index
@@ -194,6 +199,7 @@ public class MathTrees {
         return true;
     }
     
+    
     /**
      * Sets a tree given the tree name
      * @param treeName
@@ -207,30 +213,6 @@ public class MathTrees {
         return setTree(index, tree);
     }
 
-    /*
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-    
-    public void setCoord(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-    */
-    
-    
     
     /**
      * Prints all of the trees associated with this math tree 
@@ -242,6 +224,7 @@ public class MathTrees {
         }
         System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
     }
+    
     
     /**
      * gets the double r,g,b and converts it into a int color for the picture?

@@ -15,17 +15,33 @@ public class Node {
     private MathOp op; 
     
     
-    public Node(Tree tree, Node parentNode, MathOp op) {
-        //this.tree = tree;
+    /**
+     * Constructs a node
+     * @param parentNode the parent to this node
+     * @param op a math operation associated with this node
+     */
+    public Node(Node parentNode, MathOp op) {
         this.parentNode = parentNode;
         this.op = op;
         this.childNodes = new ArrayList<>();
     }
     
+    
+    /**
+     * Constructs a node
+     * @param op 
+     */
     public Node(MathOp op) {
-        this(null, null, op);
+        this(null, op);
     }
     
+    
+    /**
+     * Gets the value of the nodes at a specific point (x,y)
+     * @param x (x,y)
+     * @param y (x,y)
+     * @return the value of the nodes at a specific point (x,y)
+     */
     public double evaluate(double x, double y) {
         
         if (op == MathOp.X) return x;
@@ -52,6 +68,10 @@ public class Node {
     }
     
     
+    /**
+     * Finds the base node by traveling up the parent path
+     * @return the most parent parent
+     */
     public Node getBaseNode() {
         if (this.parentNode == null) return this;
         Node currentNode = this;
@@ -63,6 +83,11 @@ public class Node {
         return null;
     }
    
+    
+    /**
+     * Calculates the level of this node
+     * @return the level of this node (0 is the base level)
+     */
     public int getDepth() {
         if (this.getParentNode() == null) {
             return 0;
@@ -76,6 +101,7 @@ public class Node {
         }
         return depth;
     }
+    
     
     //<editor-fold defaultstate="collapsed" desc="Print functions">
     /**
@@ -99,6 +125,7 @@ public class Node {
         return s;
     }
     
+    
     /**
      * Prints the nodes recursively
      */
@@ -117,6 +144,7 @@ public class Node {
     }
     //</editor-fold>
     
+    
     //<editor-fold defaultstate="collapsed" desc="Boring getters, setters">
     /**
      * Adds a child node
@@ -128,6 +156,7 @@ public class Node {
         //n.setTree(this.tree); 
     }
     
+    
     /**
      * Determines whether this node has chidren or not
      * @return true if there are more than 0 children
@@ -136,15 +165,6 @@ public class Node {
         return childNodes.size() != 0;
     }
     
-    /**
-     * Sets the tree
-     * @param tree tree to set
-     */
-    /*
-    public void setTree(Tree tree) {
-        this.tree = tree;
-    }
-    */
     
     /**
      * Gives number of children
@@ -154,6 +174,7 @@ public class Node {
         return childNodes.size();
     }
     
+    
     /**
      * Returns the math operation associated with this node
      * @return the math op
@@ -162,15 +183,6 @@ public class Node {
         return op;
     }
 
-    /**
-     * Returns the tree associated with this node
-     * @return 
-     */
-    /*
-    public Tree getTree() {
-        return tree;
-    }
-    */
     
     /**
      * Determines whether this node is a leaf node 
@@ -180,6 +192,7 @@ public class Node {
         return getNumberOfChildren() == 0;
     }
     
+    
     /**
      * Returns the parent node associated with this node
      * @return the parent node
@@ -188,14 +201,30 @@ public class Node {
         return parentNode;
     }
     
+    
+    /**
+     * Sets the parent node
+     * @param parentNode the parent node
+     */
     public void setParentNode(Node parentNode) {
         this.parentNode = parentNode;
     }
     
+    
+    /**
+     * Returns the child nodes
+     * @return the child nodes
+     */
     public List<Node> getChildNodes() {
         return childNodes;
     }
-
+    
+    
+    /**
+     * Returns the node at a specified index
+     * @param index the index
+     * @return the node at a specified index
+     */
     public Node getNode(int index) {
         if (index < 0 || index >= childNodes.size()) {
             System.err.println("INDEX OUT OF BOUNDS");
@@ -204,8 +233,13 @@ public class Node {
         return childNodes.get(index);
     }
     
+    
+    /**
+     * A standard node without a parent
+     * @return 
+     */
     public static Node getStandardBaseNode() {
-        return new Node(null, null, MathOp.Base);
+        return new Node(null, MathOp.Base);
     }
     //</editor-fold>
 }

@@ -24,7 +24,7 @@ public class Frame extends JFrame {
     
     private final RandomMathArt rma;//to generate the math pictures
         
-    //some colors
+    //colors
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
     private static final Color GRAY = new Color(90, 90, 90);
     
@@ -41,9 +41,10 @@ public class Frame extends JFrame {
     //important options
     private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
     private static final int TICK_TIME = 400;       //clock speed in ms
-    private static final int NUM_PANELS = 15;
+    private static final int NUM_PANELS = 15;       
     
     private boolean spacebarPressed = false;
+    
     
     /**
      * Construct a frame to generate random math art
@@ -71,6 +72,7 @@ public class Frame extends JFrame {
         
     }
     
+    
     /**
      * Reinitialized the timer
      */
@@ -82,6 +84,7 @@ public class Frame extends JFrame {
             }
         }, 0, TICK_TIME);
     }
+    
     
     /**
      * Initialize the frame components
@@ -356,6 +359,7 @@ public class Frame extends JFrame {
         pack();
     }    
     
+    
     /**
      * Main tick to create a new math picture and to shift everything?
      * Automatically exports images that run "off" the screen and are selected
@@ -426,6 +430,7 @@ public class Frame extends JFrame {
         this.repaint();
     }
     
+    
     /**
      * For when any button is pressed down
      * @param e the KeyEvent
@@ -439,6 +444,7 @@ public class Frame extends JFrame {
         }
     }
     
+    
     /**
      * For when any button is released
      * @param e the KeyEvent
@@ -450,6 +456,7 @@ public class Frame extends JFrame {
         }
     }
     
+    
     /**
      * Left click of a panel event, toggles selection of the panel
      * @param index the index of the panel/icon that was right clicked
@@ -457,6 +464,7 @@ public class Frame extends JFrame {
     private void panelLeftClicked(int index) {
         togglePanelSelection(index);        
     }
+    
     
     /**
      * Right click of a panel event
@@ -466,6 +474,7 @@ public class Frame extends JFrame {
         //TODO: preview of math picture as higher resolution (Issue #6)
         
     }
+    
     
     /**
      * Toggles a panel/icon selected or deselected
@@ -489,20 +498,7 @@ public class Frame extends JFrame {
         }
     }
     
-    /**
-     * TODO: INSERT COMMENTS
-     * @param evt
-     * @return 
-     */
-    /*
-    private int getPanelAt(MouseEvent evt) {
-        ImagePanel p = (ImagePanel) mainPanel.getComponentAt(evt.getPoint());
-        System.out.println(p.toString());
 
-        return p.getIndex();
-    }
-    */
-    
     /**
      * Apparently I used the GUI builder and then copied the code so I was able to change it, so this initComponents is not used.  
      */
@@ -623,6 +619,7 @@ public class Frame extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
     /**
      * Exit button
      * @param evt the Mouse event passed
@@ -631,6 +628,7 @@ public class Frame extends JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitButtonMousePressed
 
+    
     /**
      * Starts / stops the generating of new math pictures
      * @param evt the Mouse event passed
@@ -639,6 +637,7 @@ public class Frame extends JFrame {
         running = !running;
     }//GEN-LAST:event_startStopButtonMousePressed
 
+    
     /**
      * TODO: implement the export button (Issue #7)
      * @param evt the Mouse event passed
@@ -647,6 +646,7 @@ public class Frame extends JFrame {
         System.out.println("EXPORT BUTTON DOES NOTHING RIGHT NOW");
     }//GEN-LAST:event_exportButtonMousePressed
 
+    
     /**
      * Prints the math trees for each of the icons/panels
      * @param evt the Mouse event passed
@@ -663,10 +663,12 @@ public class Frame extends JFrame {
         }
     }//GEN-LAST:event_printTreeButtonMousePressed
 
+    
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_formKeyPressed
 
+    
     /**
      * Gets the export resolution from the text field
      * @return the number in the text field, or 1920 if the text is not a number
@@ -682,6 +684,8 @@ public class Frame extends JFrame {
             return 1920;
         }
     }
+    
+    
     /**
      * Starting point
      * @param args no use
@@ -694,6 +698,7 @@ public class Frame extends JFrame {
             }
         });
     }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu exitButton;

@@ -2,7 +2,11 @@ package randommathart;
 
 import java.util.ArrayList;
 
+//TODO: documentation
 public class Tree {
+    
+    private Node motherNode;
+    private MathTrees mathTree;
     
     
     public Tree(Node motherNode, MathTrees mathTree) {
@@ -11,36 +15,32 @@ public class Tree {
         this.mathTree = mathTree;
     }
 
+    
     public Node getMotherNode() {
         return motherNode;
     }
 
+    
     public void setMotherNode(Node motherNode) {
         this.motherNode = motherNode;
     }
     
-    /*
-    public double getX() {
-        return mathTree.getX();
-    }
-    
-    public double getY() {
-        return mathTree.getY();
-    }
-    */
     
     public double evaluateTree(double x, double y) {
         return motherNode.evaluate(x, y);
     }
     
+    
     public void printTree() {
         motherNode.printNodes();
     }
+    
     
     public int numberOfNodes() {
         //subtract the motherNode, as it doesnt effect anything
         return numberOfNodes(motherNode) - 1;
     }
+    
     
     private int numberOfNodes(Node n) {
         int num = 0;
@@ -50,10 +50,12 @@ public class Tree {
         return num + 1;
     }
     
+    
     public Node[] getLeaves() {
         ArrayList<Node> leaves = getLeaves(motherNode, new ArrayList<Node>());
         return leaves.toArray(new Node[leaves.size()]);
     }
+    
     
     private ArrayList<Node> getLeaves(Node n, ArrayList<Node> leavesSoFar) {
         if (n.isLeaf()) {
@@ -65,7 +67,4 @@ public class Tree {
         }
         return leavesSoFar;
     }
-    
-    private Node motherNode;
-    private MathTrees mathTree;
 }
