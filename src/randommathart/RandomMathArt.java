@@ -13,8 +13,6 @@ import javax.imageio.ImageIO;
 public class RandomMathArt {
 
     private MathTrees mt;
-    protected static final double PI = 3.141592653589793238;
-      
     
     /**
      * For debugging, creased a random image and outputs it to desktop
