@@ -68,6 +68,15 @@ public class MathTerm {
     
     
     /**
+     * Determines whether the type is an operator (returns true) or not (returns false)
+     * @return 
+     */
+    public boolean isOperation() {
+        return type == ADD || type == MULT || type == SIN || type == COS || type == TAN || type == POW;
+    }
+    
+    
+    /**
      * Returns a random term
      * @return Returns a random term
      */
@@ -105,5 +114,27 @@ public class MathTerm {
     public static MathTerm getRandomNonTerminatingTerm() {
         int rand_type = rng.nextInt(8 - 3 + 1) + 3;     //needs to be in range [3,8] inclusive
         return new MathTerm(rand_type);
+    }
+    
+    
+    /**
+     * String representation of a math term
+     * @return 
+     */
+    @Override
+    public String toString() {
+        switch (this.type) {
+            case NUMBER:    return String.format("%.5f", num);
+            case X:         return "X";
+            case Y:         return "Y";
+            case ADD:       return "+";
+            case MULT:      return "*";
+            case SIN:       return "sin";
+            case COS:       return "cos";
+            case TAN:       return "tan";
+            case POW:       return "^";
+            case PLACEHOLDER: return "_";
+            default:        return "UNRECOGNIZED TYPE";
+        }
     }
 }

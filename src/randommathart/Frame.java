@@ -373,7 +373,7 @@ public class Frame extends JFrame {
         if (pan != null && pan.isSelected()) {
             timer.cancel();     //stop the time when we are exporting the image, then resume after
             
-            rma.setMathTree(pan.getMathTree());
+            rma.setMathTree(pan.getMathExpressions());
             BufferedImage i = rma.createPicture(getExportResolution());      //TODO this should be set by resolutionTextField
             
             //export image
@@ -657,7 +657,7 @@ public class Frame extends JFrame {
         
         for (int i = 0; i < icons.length; i++) {
             if (icons[i] != null) {
-                icons[i].getMathTree().printTrees();
+                icons[i].getMathExpressions().printExpressions();
                 return;
             }
         }

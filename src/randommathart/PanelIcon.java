@@ -6,12 +6,12 @@ import java.awt.image.BufferedImage;
 public class PanelIcon {
     
     private final BufferedImage image;
-    private final MathTrees mathTree;
+    private final MathExpressions mathExpressions;
     private boolean selected;
 
     
-    public PanelIcon(MathTrees mathTree, BufferedImage image) {
-        this.mathTree = mathTree;
+    public PanelIcon(MathExpressions mathTree, BufferedImage image) {
+        this.mathExpressions = mathTree;
         this.image = image;
         this.selected = false;
     }
@@ -22,8 +22,8 @@ public class PanelIcon {
     }
 
     
-    public MathTrees getMathTree() {
-        return mathTree;
+    public MathExpressions getMathExpressions() {
+        return mathExpressions;
     }
 
     

@@ -5,15 +5,13 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 //TODO DOCUMENTATION
 public class RandomMathArt {
 
-    private MathTrees mt;
+    private MathExpressions mt;
     
     
     /**
@@ -21,19 +19,21 @@ public class RandomMathArt {
      * @param args unused
      */
     public static void main(String[] args) {
+        String desktopDir = System.getProperty("user.home") + "/Desktop/";
         RandomMathArt rma = new RandomMathArt();
-        System.out.println("Enter a number (1 quits)");
+        System.out.print("Enter a number (1 quits): ");
         
         Scanner in = new Scanner(System.in);
         int num = in.nextInt();
         
         while (num != 1) {
             rma.createNewMathTree();
-            rma.getMathTree().printTrees();
-            BufferedImage i = rma.createPicture(1000);
+            rma.getMathTree().printExpressions();
+            BufferedImage image = rma.createPicture(1000);
             try {
-                File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\" + "testingPicture.png");
-                ImageIO.write(i, "png", outputfile);
+                File outputfile = new File(desktopDir + "testingPicture" + num + ".png");
+                ImageIO.write(image, "png", outputfile);
+                System.out.println("OUTPUTED IMAGE SUCCESSFULLY!\nInput another number: (1 quits): ");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -45,7 +45,7 @@ public class RandomMathArt {
     
     
     public void createNewMathTree() {
-        mt = new MathTrees("red", "green", "blue");
+        mt = new MathExpressions("red", "green", "blue");
     }
     
     
@@ -65,9 +65,9 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                image.setRGB(x, y, 
-                        MathTrees.getRGB(mt.getTree("red"), mt.getTree("green"), mt.getTree("blue"), xCoord, yCoord)
-                );
+                int rgb = MathExpressions.getRGB(mt.getExpr("red"), mt.getExpr("green"), mt.getExpr("blue"), xCoord, yCoord);                
+                image.setRGB(x, y, rgb);
+
             }
         }
         
@@ -105,12 +105,12 @@ public class RandomMathArt {
     }
     
     
-    public MathTrees getMathTree() {
+    public MathExpressions getMathTree() {
         return mt;
     }
 
     
-    public void setMathTree(MathTrees mathTree) {
+    public void setMathTree(MathExpressions mathTree) {
         this.mt = mathTree;
     }
 }
