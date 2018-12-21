@@ -39,9 +39,10 @@ public class Frame extends JFrame {
     private static final LineBorder DESELECTED_PANEL_BORDER = new LineBorder(GRAY, 1, false);
 
     //important options
-    private static final int ICON_RESOLUTION = 200; //the preview icon size in pixels
-    private static final int TICK_TIME = 400;       //clock speed in ms
-    private static final int NUM_PANELS = 15;       
+    protected static final int ACTUAL_ICON_RESOLUTION = 200;  //the size of the icon ON THE SCREEN
+    protected static final int ICON_RESOLUTION = 100;         //the size of the generate picture
+    protected static final int TICK_TIME = 2000;                //clock speed in ms
+    protected static final int NUM_PANELS = 15;       
     
     private boolean spacebarPressed = false;
     
@@ -69,7 +70,6 @@ public class Frame extends JFrame {
         //start timer
         running = false;
         restartTimer();
-        
     }
     
     
@@ -129,7 +129,7 @@ public class Frame extends JFrame {
         
         panels = new ImagePanel[NUM_PANELS];
         for (int i = 0; i < panels.length; i++) {
-            panels[i] = new ImagePanel(null, i);
+            panels[i] = new ImagePanel(null);
             panels[i].setMinimumSize(new Dimension (200, 200));
             panels[i].setMaximumSize(new Dimension (200, 200));
             panels[i].setPreferredSize(new Dimension (200, 200));
@@ -296,7 +296,7 @@ public class Frame extends JFrame {
         resolutionTextField.setSelectedTextColor(new java.awt.Color(0, 0, 0));
         resolutionTextField.setSelectionColor(new java.awt.Color(255, 255, 255));
 
-        startStopButton.setText("Start/Stop");
+        startStopButton.setText("Start");
         startStopButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override public void mousePressed(java.awt.event.MouseEvent evt) {
                 startStopButtonMousePressed(evt);
@@ -304,6 +304,7 @@ public class Frame extends JFrame {
         });
         menuBar.add(startStopButton);
 
+        /*
         exportButton.setText("Export Photos");
         exportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -311,7 +312,9 @@ public class Frame extends JFrame {
             }
         });
         menuBar.add(exportButton);
-
+        */
+        
+        /*
         printTreeButton.setText("Print Tree");
         printTreeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -319,6 +322,7 @@ public class Frame extends JFrame {
             }
         });
         menuBar.add(printTreeButton);
+        */
         
         exitButton.setText("Exit");
         exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -361,29 +365,27 @@ public class Frame extends JFrame {
     
     
     /**
-     * Main tick to create a new math picture and to shift everything?
+     * Main tick to create a new math picture and to shift everything
      * Automatically exports images that run "off" the screen and are selected
      */
-    public void tick() {
+    private void tick() {
         if (!running) 
             return;
         
         //last panel icon, export if it is selected
-        PanelIcon pan = icons[icons.length - 1];    
-        if (pan != null && pan.isSelected()) {
-            timer.cancel();     //stop the time when we are exporting the image, then resume after
+        PanelIcon last_panel = icons[icons.length - 1];    
+        if (last_panel != null && last_panel.isSelected()) {
+            //stop the time when we are exporting the image, then resume after
+            timer.cancel();     
             
-            rma.setMathTree(pan.getMathExpressions());
-            BufferedImage i = rma.createPicture(getExportResolution());      //TODO this should be set by resolutionTextField
+            //generate desired resolution image
+            BufferedImage i = rma.createPicture(last_panel.getMathExpressions(), getExportResolution());
             
             //export image
-            try {
-                RandomMathArt.exportImage(RandomMathArt.getScaledImage(i, getExportResolution(), getExportResolution()), 
-                        "picture" + numOfPictures);
-            } catch (IOException ex) {
-                System.err.println("Error exporting image");
-                ex.printStackTrace();
-            }
+            //NEED TO SCALE THE IMAGE? IT SHOULD BE THE CORRECT RESOLUTION ALREADY.
+            RandomMathArt.exportImage(
+                    RandomMathArt.getScaledImage(i, getExportResolution(), getExportResolution()), 
+                    "picture" + numOfPictures);
             
             restartTimer();
         }
@@ -397,9 +399,9 @@ public class Frame extends JFrame {
         }
         
         //create new random math picture
-        rma.createNewMathTree();
-        BufferedImage image = rma.createPicture(getExportResolution());
-        PanelIcon icon = new PanelIcon(rma.getMathTree(), image);
+        MathExpressions newMathExprs = RandomMathArt.createNewMathExprs();
+        BufferedImage image = RandomMathArt.createPicture(newMathExprs, ICON_RESOLUTION);
+        PanelIcon icon = new PanelIcon(newMathExprs, image);
         icons[0] = icon;    //set 0th icon to the new picture
         
         //TODO WHAT ABOUT THESE?
@@ -438,8 +440,16 @@ public class Frame extends JFrame {
     private void keyPressedEvent(KeyEvent e) {
         //check if spacebar pressed
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            if (this.spacebarPressed == false)
+            if (this.spacebarPressed == false) {
                 running = !running;
+                if (running == true) {
+                    startStopButton.setText("Stop");
+                }
+                else {
+                    startStopButton.setText(("Start"));
+                }
+                
+            }
             this.spacebarPressed = true;
         }
     }

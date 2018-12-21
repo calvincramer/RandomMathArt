@@ -10,9 +10,6 @@ import javax.imageio.ImageIO;
 
 //TODO DOCUMENTATION
 public class RandomMathArt {
-
-    private MathExpressions mt;
-    
     
     /**
      * For debugging, creased a random image and outputs it to desktop
@@ -27,9 +24,9 @@ public class RandomMathArt {
         int num = in.nextInt();
         
         while (num != 1) {
-            rma.createNewMathTree();
-            rma.getMathTree().printExpressions();
-            BufferedImage image = rma.createPicture(1000);
+            MathExpressions exprs = rma.createNewMathExprs();
+            exprs.printExpressions();
+            BufferedImage image = RandomMathArt.createPicture(exprs, 1000);
             try {
                 File outputfile = new File(desktopDir + "testingPicture" + num + ".png");
                 ImageIO.write(image, "png", outputfile);
@@ -44,14 +41,26 @@ public class RandomMathArt {
     }
     
     
-    public void createNewMathTree() {
-        mt = new MathExpressions("red", "green", "blue");
+    /**
+     * Creates a random MathExpressions, with three expressions for red, green, and blue.
+     * @return a random MathExpressions
+     */
+    public static MathExpressions createNewMathExprs() {
+        return new MathExpressions("red", "green", "blue");
     }
     
     
-    public BufferedImage createPicture(int resolution) {
-        if (mt == null) {
-            throw new NullPointerException("MATHTREE IS NULL YOU DUMMY!");
+    /**
+     * Creates an image of a given resolution (square) centered around the 
+     * origin (0,0) with a window of (-1,-1) to (1,1) in the math world that the
+     * given math expressions work in
+     * @param exprs math expression input, must have red, green, and blue expressions
+     * @param resolution desired resolution, set to 200 if given non-positive
+     * @return image of exprs
+     */
+    public static BufferedImage createPicture(MathExpressions exprs, int resolution) {
+        if (exprs == null) {
+            throw new NullPointerException("MATHEXPRESSIONS IS NULL YOU DUMMY!");
         }
         if (resolution < 0) 
             resolution = 200;
@@ -65,7 +74,11 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                int rgb = MathExpressions.getRGB(mt.getExpr("red"), mt.getExpr("green"), mt.getExpr("blue"), xCoord, yCoord);                
+                int rgb = MathExpressions.getRGB(
+                        exprs.getExpr("red"), 
+                        exprs.getExpr("green"), 
+                        exprs.getExpr("blue"), 
+                        xCoord, yCoord);                
                 image.setRGB(x, y, rgb);
 
             }
@@ -75,11 +88,14 @@ public class RandomMathArt {
     }
     
     
+    /**
+     * Exports the given image with the given name to the working directory
+     * @param image input image
+     * @param imageName input name
+     */
     public static void exportImage(BufferedImage image, String imageName) {
         try {
             File test = new File("");
-            
-            //File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\Math Pictures\\" + imageName + ".png");
             File outputfile = new File(test.getAbsolutePath() + imageName + ".png");
             System.out.println(outputfile.getAbsolutePath());
             ImageIO.write(image, "png", outputfile);
@@ -90,7 +106,15 @@ public class RandomMathArt {
     }  
     
     
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
+    /**
+     * Scales an image to the desired width and height
+     * @param image the input image
+     * @param width desired output width
+     * @param height desired output height
+     * @return the scaled image
+     * @throws IOException 
+     */
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) {
         int imageWidth  = image.getWidth();
         int imageHeight = image.getHeight();
 
@@ -102,15 +126,5 @@ public class RandomMathArt {
         return bilinearScaleOp.filter(
             image,
             new BufferedImage(width, height, image.getType()));
-    }
-    
-    
-    public MathExpressions getMathTree() {
-        return mt;
-    }
-
-    
-    public void setMathTree(MathExpressions mathTree) {
-        this.mt = mathTree;
     }
 }

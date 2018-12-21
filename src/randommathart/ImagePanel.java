@@ -8,15 +8,22 @@ import javax.swing.JPanel;
 public class ImagePanel extends JPanel{
 
     private BufferedImage image;    //image
-
+    private BufferedImage scaledImage;
     
-    public ImagePanel(BufferedImage image, int index) {
-       this.image = image;
+    
+    public ImagePanel(BufferedImage image) {
+        setImage(image);
     }
 
     
+    /**
+     * Sets the image of this panel
+     * @param image image to use
+     */
     public void setImage(BufferedImage image) {
         this.image = image;
+        if (image != null)
+            this.scaledImage = RandomMathArt.getScaledImage(image, Frame.ACTUAL_ICON_RESOLUTION, Frame.ACTUAL_ICON_RESOLUTION);
     }
 
     
@@ -24,9 +31,8 @@ public class ImagePanel extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (image != null) { 
-            g.drawImage(image, 0, 0, null);
-        }    
+        if (scaledImage != null)    g.drawImage(scaledImage, 0, 0, null);  
+        else if (image != null)     g.drawImage(image, 0, 0, null);
     }
 
 }

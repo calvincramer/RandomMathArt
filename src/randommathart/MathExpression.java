@@ -12,7 +12,7 @@ public class MathExpression {
     
     private List<MathTerm> terms;   //reverse polish notation list of terms?
     protected static final double PI = Math.PI;
-    public static final int MAX_NON_TERMS = 100;
+    public static final int MAX_NON_TERMS = 200;
     private static Random rng = new Random(System.currentTimeMillis());
     
     
@@ -22,6 +22,7 @@ public class MathExpression {
     public MathExpression() {
         this.terms = new ArrayList<>();
         this.generateRandomExpression();
+        //TODO: preprocess expression to make actual expression faster
     }
     
     
