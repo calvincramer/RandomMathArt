@@ -5,35 +5,42 @@ import java.awt.image.BufferedImage;
 
 public class PanelIcon {
     
-    public PanelIcon(MathTree mathTree, BufferedImage image) {
-        this.mathTree = mathTree;
+    private final BufferedImage image;
+    private final MathExpressions mathExpressions;
+    private boolean selected;
+
+    
+    public PanelIcon(MathExpressions mathTree, BufferedImage image) {
+        this.mathExpressions = mathTree;
         this.image = image;
         this.selected = false;
     }
+    
     
     public BufferedImage getImage() {
         return image;
     }
 
-    public MathTree getMathTree() {
-        return mathTree;
+    
+    public MathExpressions getMathExpressions() {
+        return mathExpressions;
     }
 
+    
     public boolean isSelected() {
         return selected;
     }
 
+    
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+    
     
     @Override
     public String toString() {
         return "I";
     }
     
-    private final BufferedImage image;
-    private final MathTree mathTree;
-    private boolean selected;
-
+    
 }

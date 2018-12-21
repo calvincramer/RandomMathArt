@@ -10,29 +10,27 @@ import javax.imageio.ImageIO;
 
 //TODO DOCUMENTATION
 public class RandomMathArt {
-
-    private MathTree mt;
-    protected static final double PI = 3.141592653589793238;
-      
+    
     /**
-     * Another start point, which start point should we use?
-     * TODO: CHOOSE START POINT
-     * @param args 
+     * For debugging, creased a random image and outputs it to desktop
+     * @param args unused
      */
     public static void main(String[] args) {
+        String desktopDir = System.getProperty("user.home") + "/Desktop/";
         RandomMathArt rma = new RandomMathArt();
-        System.out.println("Enter a number (1 quits)");
+        System.out.print("Enter a number (1 quits): ");
         
         Scanner in = new Scanner(System.in);
         int num = in.nextInt();
         
         while (num != 1) {
-            rma.createNewMathTree();
-            rma.getMathTree().printTrees();
-            BufferedImage i = rma.createPicture(1000);
+            MathExpressions exprs = rma.createNewMathExprs();
+            exprs.printExpressions();
+            BufferedImage image = RandomMathArt.createPicture(exprs, 1000);
             try {
-                File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\" + "testingPicture.png");
-                ImageIO.write(i, "png", outputfile);
+                File outputfile = new File(desktopDir + "testingPicture" + num + ".png");
+                ImageIO.write(image, "png", outputfile);
+                System.out.println("OUTPUTED IMAGE SUCCESSFULLY!\nInput another number: (1 quits): ");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -42,18 +40,27 @@ public class RandomMathArt {
         
     }
     
-    public RandomMathArt() {
-        //nuthing? 
-        
+    
+    /**
+     * Creates a random MathExpressions, with three expressions for red, green, and blue.
+     * @return a random MathExpressions
+     */
+    public static MathExpressions createNewMathExprs() {
+        return new MathExpressions("red", "green", "blue");
     }
     
-    public void createNewMathTree() {
-        mt = new MathTree(3, "red", "green", "blue");
-    }
     
-    public BufferedImage createPicture(int resolution) {
-        if (mt == null) {
-            throw new NullPointerException("MATHTREE IS NULL YOU DUMMY!");
+    /**
+     * Creates an image of a given resolution (square) centered around the 
+     * origin (0,0) with a window of (-1,-1) to (1,1) in the math world that the
+     * given math expressions work in
+     * @param exprs math expression input, must have red, green, and blue expressions
+     * @param resolution desired resolution, set to 200 if given non-positive
+     * @return image of exprs
+     */
+    public static BufferedImage createPicture(MathExpressions exprs, int resolution) {
+        if (exprs == null) {
+            throw new NullPointerException("MATHEXPRESSIONS IS NULL YOU DUMMY!");
         }
         if (resolution < 0) 
             resolution = 200;
@@ -67,19 +74,28 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                mt.setCoord(xCoord, yCoord);
-                image.setRGB(x, y, MathTree.getRGB(mt.getTree("red"), mt.getTree("green"), mt.getTree("blue")));
+                int rgb = MathExpressions.getRGB(
+                        exprs.getExpr("red"), 
+                        exprs.getExpr("green"), 
+                        exprs.getExpr("blue"), 
+                        xCoord, yCoord);                
+                image.setRGB(x, y, rgb);
+
             }
         }
         
         return image;
     }
     
+    
+    /**
+     * Exports the given image with the given name to the working directory
+     * @param image input image
+     * @param imageName input name
+     */
     public static void exportImage(BufferedImage image, String imageName) {
         try {
             File test = new File("");
-            
-            //File outputfile = new File("C:\\Users\\Calvin Cramer\\Desktop\\Math Pictures\\" + imageName + ".png");
             File outputfile = new File(test.getAbsolutePath() + imageName + ".png");
             System.out.println(outputfile.getAbsolutePath());
             ImageIO.write(image, "png", outputfile);
@@ -89,7 +105,16 @@ public class RandomMathArt {
         }
     }  
     
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
+    
+    /**
+     * Scales an image to the desired width and height
+     * @param image the input image
+     * @param width desired output width
+     * @param height desired output height
+     * @return the scaled image
+     * @throws IOException 
+     */
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) {
         int imageWidth  = image.getWidth();
         int imageHeight = image.getHeight();
 
@@ -101,57 +126,5 @@ public class RandomMathArt {
         return bilinearScaleOp.filter(
             image,
             new BufferedImage(width, height, image.getType()));
-    }
-    
-    public MathTree getMathTree() {
-        return mt;
-    }
-
-    public void setMathTree(MathTree mathTree) {
-        this.mt = mathTree;
-    }
-    
-    private void debugStuff() {
-        MathTree mathTree = new MathTree(1, "r");
-        Tree redTestTree = new Tree(Node.getStandardBaseNode(), mathTree);
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Cos));
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().addNode(new Node(MathOp.Avg));
-        redTestTree.getMotherNode().getNode(0).addNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(0).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(1).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.X));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(2).addNode(new Node(MathOp.Pi));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addNode(new Node(MathOp.Sin));
-        redTestTree.getMotherNode().getNode(0).getNode(0).addNode(new Node(MathOp.Y));
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addNode(new Node(MathOp.X));
-        Node n = new Node(MathOp.X);
-        redTestTree.getMotherNode().getNode(0).getNode(0).getNode(0).addNode(n);
-                
-        
-        mathTree.setTree("r", redTestTree);
-        System.out.println("RED TEST TREE: ");
-        mathTree.getTree("r").printTree();
-        
-        System.out.println();
-        
-        Node[] firstChildren = mathTree.getTree("r").getMotherNode().getChildNodes();
-        System.out.println("Children of motherNode:");
-        for (Node node : firstChildren) {
-            System.out.println("   " + node.toString());
-        }
-        System.out.println("Leaves are full? : " + mathTree.lookForFullLeaves(redTestTree.getMotherNode()));
-        System.out.println("Mothernode a leaf? " + mathTree.getTree("r").getMotherNode().isLeaf());
-        System.out.println("Number of nodes: "  + mathTree.getTree("r").numberOfNodes());
-        Node[] leaves = mathTree.getTree("r").getLeaves();
-        System.out.println("Number of leaves: " + leaves.length);
-        /*
-        System.out.println("Leaves: ");
-        for (Node node : leaves) {
-            System.out.println("   " + node.toString());
-        }
-        */
     }
 }
