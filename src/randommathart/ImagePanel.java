@@ -13,16 +13,18 @@ import javax.swing.border.LineBorder;
  * The image is created by the given math expressions
  * The panel can be selected and deselected
  */
-public class ImagePanel extends JPanel{
+public class ImagePanel 
+        extends JPanel
+        implements Runnable {
 
-    private final MathExpressions mathExprs;    //math expressions for the image
+    private MathExpressions mathExprs;    //math expressions for the image
     private BufferedImage image;                //image
     private BufferedImage scaledImage;          //scaled down image
     private boolean selected;                   //selected or not
 
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
     private static final LineBorder BORDER_SELECTED = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
-    private static final LineBorder BORDER_DESELECTED = new LineBorder(GUI.GRAY, 1, false);
+    private static final LineBorder BORDER_DESELECTED = new LineBorder(Color.YELLOW, 1, false);
     
     
     /**
@@ -71,7 +73,7 @@ public class ImagePanel extends JPanel{
      */
     public ImagePanel(MathExpressions mathExprs, BufferedImage image, boolean selected) {
         this.mathExprs = mathExprs;
-        if (image == null) {
+        if (image == null && mathExprs != null) {
             //TODO
             //set image to loading image, or progress bar
             
@@ -81,7 +83,8 @@ public class ImagePanel extends JPanel{
             setImage(image);
         }
         //sets border to desired, also sets the border 
-        this.setSelected(selected);
+        this.selected = selected;
+        this.setBorder(this.selected ? BORDER_SELECTED : BORDER_DESELECTED);
         //set mouse listener
         this.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent evt) {
@@ -100,7 +103,8 @@ public class ImagePanel extends JPanel{
      * Starts construction of the image in another thread
      */
     private void startImageCreationThread() {
-        //TODO
+        Thread creationThread = new Thread(this, "image creation thread");
+        creationThread.start();
     }
 
     
@@ -111,7 +115,7 @@ public class ImagePanel extends JPanel{
     public void setImage(BufferedImage image) {
         this.image = image;
         if (image != null)
-            this.scaledImage = RandomMathArt.getScaledImage(image, GUI.ACTUAL_ICON_RESOLUTION, GUI.ACTUAL_ICON_RESOLUTION);
+            this.scaledImage = RandomMathArt.getScaledImage(image, GUI2.ACTUAL_ICON_RESOLUTION, GUI2.ACTUAL_ICON_RESOLUTION);
     }
 
     
@@ -150,7 +154,10 @@ public class ImagePanel extends JPanel{
      * Toggles the selection of the panel
      */
     public void toggleSelected() {
-        this.setSelected( !this.selected );
+        if (this.image == null && this.scaledImage == null)
+            this.setSelected( false );
+        else
+            this.setSelected( !this.selected );
     }
 
     
@@ -160,5 +167,30 @@ public class ImagePanel extends JPanel{
         super.paintComponent(g);
         if (scaledImage != null)    g.drawImage(scaledImage, 0, 0, null);  
         else if (image != null)     g.drawImage(image, 0, 0, null);
+        else {} //default no picture picture
+    }
+    
+    
+    public void replaceWith(ImagePanel other) {
+        this.image = other.image;
+        this.mathExprs = other.mathExprs;
+        this.scaledImage = other.scaledImage;
+        this.setSelected(other.selected);
+    }
+
+    
+    /**
+     * Create image from math expressions
+     */
+    @Override
+    public void run() {
+        System.out.println("running thread!");
+        if (this.mathExprs != null) {
+            System.out.println("creating image in thread");
+            BufferedImage image = RandomMathArt.createPicture(mathExprs, GUI2.ICON_RESOLUTION);
+            this.setImage(image);
+            this.repaint();
+        }
+        System.out.println("done running thread\n");
     }
 }
