@@ -23,7 +23,7 @@ public class ImagePanel extends JPanel{
     public void setImage(BufferedImage image) {
         this.image = image;
         if (image != null)
-            this.scaledImage = RandomMathArt.getScaledImage(image, Frame.ACTUAL_ICON_RESOLUTION, Frame.ACTUAL_ICON_RESOLUTION);
+            this.scaledImage = RandomMathArt.getScaledImage(image, GUI.ACTUAL_ICON_RESOLUTION, GUI.ACTUAL_ICON_RESOLUTION);
     }
 
     

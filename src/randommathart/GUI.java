@@ -20,9 +20,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-public class Frame extends JFrame {
+public class GUI extends JFrame {
     
-    private final RandomMathArt rma;//to generate the math pictures
+    private final RandomMathArt rma;    //to generate the math pictures
         
     //colors
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
@@ -50,7 +50,7 @@ public class Frame extends JFrame {
     /**
      * Construct a frame to generate random math art
      */
-    public Frame() {
+    public GUI() {
         myInitComponents();
         
         //center frame
@@ -434,6 +434,30 @@ public class Frame extends JFrame {
     
     
     /**
+     * Toggles a panel/icon selected or deselected
+     * @param index the index of the panel/icon that was right clicked
+     */
+    private void togglePanelSelection(int index) {
+        //bounds check
+        if (index < 0 || index >= panels.length) {
+            System.err.println("Cannot toggle selection of panel " + index + " because index is out of range");
+            return;
+        }  
+        //toggle selection
+        if (icons[index] != null) {
+            if (icons[index].isSelected()) {    //icon/panel is selected, deselect it
+                panels[index].setBorder(DESELECTED_PANEL_BORDER);
+                icons[index].setSelected(false);
+            } else {                            //icon/panel is not selected, select it
+                panels[index].setBorder(SELECTED_PANEL_BORDER);
+                icons[index].setSelected(true);
+            }
+        }
+    }
+    
+    
+    //<editor-fold defaultstate="collapsed" desc="Boring stuff">
+    /**
      * For when any button is pressed down
      * @param e the KeyEvent
      */
@@ -453,7 +477,7 @@ public class Frame extends JFrame {
             this.spacebarPressed = true;
         }
     }
-    
+
     
     /**
      * For when any button is released
@@ -483,29 +507,6 @@ public class Frame extends JFrame {
     private void panelRightClicked(int index) {
         //TODO: preview of math picture as higher resolution (Issue #6)
         
-    }
-    
-    
-    /**
-     * Toggles a panel/icon selected or deselected
-     * @param index the index of the panel/icon that was right clicked
-     */
-    private void togglePanelSelection(int index) {
-        //bounds check
-        if (index < 0 || index >= panels.length) {
-            System.err.println("Cannot toggle selection of panel " + index + " because index is out of range");
-            return;
-        }  
-        //toggle selection
-        if (icons[index] != null) {
-            if (icons[index].isSelected()) {    //icon/panel is selected, deselect it
-                panels[index].setBorder(DESELECTED_PANEL_BORDER);
-                icons[index].setSelected(false);
-            } else {                            //icon/panel is not selected, select it
-                panels[index].setBorder(SELECTED_PANEL_BORDER);
-                icons[index].setSelected(true);
-            }
-        }
     }
     
 
@@ -674,6 +675,10 @@ public class Frame extends JFrame {
     }//GEN-LAST:event_printTreeButtonMousePressed
 
     
+    /**
+     * Currently has no functionality
+     * @param evt unused
+     */
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         // TODO add your handling code here:
     }//GEN-LAST:event_formKeyPressed
@@ -694,6 +699,7 @@ public class Frame extends JFrame {
             return 1920;
         }
     }
+    //</editor-fold>
     
     
     /**
@@ -704,7 +710,7 @@ public class Frame extends JFrame {
         //TODO why invoke a different thread?
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                new Frame().setVisible(true);
+                new GUI().setVisible(true);
             }
         });
     }
