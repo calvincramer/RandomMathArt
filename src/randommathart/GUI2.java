@@ -35,7 +35,7 @@ public class GUI2 extends JFrame {
 
     //important options
     protected static final int ACTUAL_ICON_RESOLUTION = 200;  //the size of the icon ON THE SCREEN
-    protected static final int ICON_RESOLUTION = 40;         //the size of the generate picture
+    protected static final int ICON_RESOLUTION = 80;         //the size of the generate picture
     protected static final int TICK_TIME = 2000;             //clock speed in ms
     protected static final int NUM_PANELS = 15;       
     

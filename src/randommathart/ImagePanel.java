@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -25,6 +27,10 @@ public class ImagePanel
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
     private static final LineBorder BORDER_SELECTED = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
     private static final LineBorder BORDER_DESELECTED = new LineBorder(Color.YELLOW, 1, false);
+    
+    private State STATE = State.CLEAR;
+            
+    private enum State { CLEAR, LOADING, CROSS, HAVE_PICTURE }
     
     
     /**
@@ -76,10 +82,11 @@ public class ImagePanel
         if (image == null && mathExprs != null) {
             //TODO
             //set image to loading image, or progress bar
-            
+            this.setState(State.LOADING);
             startImageCreationThread();
         }
         else {
+            this.setState(State.HAVE_PICTURE);
             setImage(image);
         }
         //sets border to desired, also sets the border 
@@ -105,17 +112,34 @@ public class ImagePanel
     private void startImageCreationThread() {
         Thread creationThread = new Thread(this, "image creation thread");
         creationThread.start();
+        try {
+            creationThread.join();      //don't want to use join, because it gets rid of all benefits of multithreading
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     
     /**
-     * Sets the image of this panel, and scaled image size
+     * Sets the image of this panel, and also sets a scaled image of size GUI2.ACTUAL_ICON_RESOLUTION
      * @param image image to use
      */
-    public void setImage(BufferedImage image) {
+    public synchronized void setImage(BufferedImage image) {
+        this.setImage(image, null);
+    }
+    
+    
+    /**
+     * Sets the image of this panel, and also sets a scaled image of size GUI2.ACTUAL_ICON_RESOLUTION
+     * @param image image to use
+     * @param scaledImage scaled image of the image
+     */
+    public synchronized void setImage(BufferedImage image, BufferedImage scaledImage) {
         this.image = image;
+        this.scaledImage = scaledImage;
         if (image != null)
             this.scaledImage = RandomMathArt.getScaledImage(image, GUI2.ACTUAL_ICON_RESOLUTION, GUI2.ACTUAL_ICON_RESOLUTION);
+        this.setState((image == null) ? State.CLEAR : State.HAVE_PICTURE);
     }
 
     
@@ -165,16 +189,40 @@ public class ImagePanel
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (scaledImage != null)    g.drawImage(scaledImage, 0, 0, null);  
-        else if (image != null)     g.drawImage(image, 0, 0, null);
-        else {} //default no picture picture
+        
+        switch (this.STATE) {
+            case CLEAR: return;
+            case LOADING: 
+                g.setColor(Color.WHITE);
+                g.fillRect(0, 0, this.getWidth(), this.getHeight());
+                break;
+            case CROSS: {
+                g.setColor(Color.RED);
+                g.drawLine(0, 0, this.getWidth(), this.getHeight());
+                g.drawLine(0, this.getHeight(), this.getWidth(), 0);
+                break;
+            }
+            case HAVE_PICTURE: {
+                if (scaledImage != null)    g.drawImage(scaledImage, 0, 0, null);  
+                else if (image != null)     g.drawImage(image, 0, 0, null);
+                else {} //default no picture picture
+                break;
+            }
+            default: {
+                System.err.println("bad image panel state");
+                break;
+            }
+        }
     }
     
     
+    /**
+     * Replaces all of the data of this with the data from other
+     * @param other 
+     */
     public void replaceWith(ImagePanel other) {
-        this.image = other.image;
+        this.setImage(other.image, other.scaledImage);
         this.mathExprs = other.mathExprs;
-        this.scaledImage = other.scaledImage;
         this.setSelected(other.selected);
     }
 
@@ -184,13 +232,34 @@ public class ImagePanel
      */
     @Override
     public void run() {
-        System.out.println("running thread!");
+        //System.out.println("running thread!");
+        
+        if (this.image != null) {
+            //System.out.println("already have image, stopping thead");
+            return;
+        }
+        
+        this.setState(State.LOADING);
+        
         if (this.mathExprs != null) {
-            System.out.println("creating image in thread");
+            //System.out.println("creating image in thread");
             BufferedImage image = RandomMathArt.createPicture(mathExprs, GUI2.ICON_RESOLUTION);
             this.setImage(image);
             this.repaint();
         }
-        System.out.println("done running thread\n");
+        
+        this.setState(State.HAVE_PICTURE);
+        
+        //System.out.println("done running thread\n");
+    }
+    
+    
+    /**
+     * Sets the state of this image panel
+     * Thread safe
+     * @param state new state to be in 
+     */
+    private synchronized void setState(ImagePanel.State state) {
+        this.STATE = state;
     }
 }
