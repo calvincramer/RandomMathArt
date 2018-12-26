@@ -11,11 +11,12 @@ public class MathExpressions {
     private MathExpression[] exprs;       //all expressions
     private Map<String, Integer> exprNameMap;   //name of tree to integer 
     
-    private Random rng;
     
-    public MathExpressions(String... exprNames) {
-        rng = new Random(System.currentTimeMillis());
-        
+    /**
+     * Creates a new math math expression for each expression name given
+     * @param exprNames 
+     */
+    public MathExpressions(String... exprNames) {        
         //make map and name map
         this.exprs = new MathExpression[exprNames.length];
         this.exprNameMap = new HashMap<>();
@@ -100,5 +101,28 @@ public class MathExpressions {
         rgb = (rgb << 8) + g;
         rgb = (rgb << 8) + b;
         return rgb;
+    }
+    
+    
+    /**
+     * gets the double r,g,b and converts it into a int color for the picture?
+     * @return 
+     */
+    public static int[] getRGBArr(MathExpression redExpr, MathExpression greenExpr, MathExpression blueExpr, double x, double y) {
+        if (redExpr == null || greenExpr == null || blueExpr == null) {
+            System.out.println("ONE OR MORE EXPRESSIONS ARE NULL!");
+            if (redExpr == null) System.out.println("redExpr is null");
+            if (greenExpr == null) System.out.println("greenExpr is null");
+            if (blueExpr == null) System.out.println("blueExpr is null");
+            System.exit(1);
+        }
+        double red = redExpr.evaluateExpression(x, y);
+        double green = greenExpr.evaluateExpression(x, y);
+        double blue = blueExpr.evaluateExpression(x, y);
+        
+        int r = (int)((red + 1) * (255.0/2));
+        int g = (int)((green + 1) * (255.0/2));
+        int b = (int)((blue + 1) * (255.0/2));
+        return new int[]{r, g, b};
     }
 }

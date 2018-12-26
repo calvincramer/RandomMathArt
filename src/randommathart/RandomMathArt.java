@@ -3,13 +3,17 @@ package randommathart;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 //TODO DOCUMENTATION
 public class RandomMathArt {
+    
+    protected static Random rng = new Random(System.currentTimeMillis());
     
     /**
      * For debugging, creased a random image and outputs it to desktop
@@ -46,7 +50,10 @@ public class RandomMathArt {
      * @return a random MathExpressions
      */
     public static MathExpressions createNewMathExprs() {
-        return new MathExpressions("red", "green", "blue");
+        long start = System.currentTimeMillis();
+        MathExpressions toReturn = new MathExpressions("red", "green", "blue");
+        System.out.println("Time create new math exprs: " + (System.currentTimeMillis() - start) + " ms");
+        return toReturn;
     }
     
     
@@ -59,6 +66,7 @@ public class RandomMathArt {
      * @return image of exprs
      */
     public static BufferedImage createPicture(MathExpressions exprs, int resolution) {
+        long start = System.currentTimeMillis();
         if (exprs == null) {
             throw new NullPointerException("MATHEXPRESSIONS IS NULL YOU DUMMY!");
         }
@@ -66,7 +74,18 @@ public class RandomMathArt {
             resolution = 200;
         
         BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.OPAQUE);
-
+        WritableRaster raster = image.getRaster();
+        
+        MathExpression redExpr = exprs.getExpr("red");
+        MathExpression grnExpr = exprs.getExpr("green");
+        MathExpression bluExpr = exprs.getExpr("blue");
+        if (redExpr == null || grnExpr == null || bluExpr == null)
+            throw new NullPointerException("Need to have 'red', 'green', and 'blue' math expressions");
+        
+        int[] pixels = new int[raster.getWidth() * raster.getHeight() * 3];
+        int grnBandOffset = raster.getWidth() * raster.getHeight();
+        int bluBandOffset = grnBandOffset * 2;
+        
         double xCoord;
         double yCoord;
         for (int x = 0; x < image.getWidth(); x++) {
@@ -74,16 +93,24 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                int rgb = MathExpressions.getRGB(
-                        exprs.getExpr("red"), 
-                        exprs.getExpr("green"), 
-                        exprs.getExpr("blue"), 
-                        xCoord, yCoord);                
-                image.setRGB(x, y, rgb);
-
+                //int rgb = MathExpressions.getRGB(redExpr, grnExpr, bluExpr, xCoord, yCoord);                
+                //image.setRGB(x, y, rgb);
+                
+                //int[] rgb = MathExpressions.getRGBArr(redExpr, grnExpr, bluExpr, xCoord, yCoord);                
+                //raster.setPixel(x, y, rgb);
+                
+                //TODO: correctly buffer pixel writing faster than 250ms at 80x80 resolution
+                int[] rgb = MathExpressions.getRGBArr(redExpr, grnExpr, bluExpr, xCoord, yCoord);
+                pixels[y * raster.getWidth() + x] = rgb[0];
+                pixels[y * raster.getWidth() + x + grnBandOffset] = rgb[1];
+                pixels[y * raster.getWidth() + x + bluBandOffset] = rgb[2];
             }
         }
         
+        
+        raster.setPixels(0, 0, raster.getWidth(), raster.getHeight(), pixels);
+        image.setData(raster);
+        System.out.println("Time create image: " + (System.currentTimeMillis() - start) + " ms");
         return image;
     }
     
@@ -126,5 +153,14 @@ public class RandomMathArt {
         return bilinearScaleOp.filter(
             image,
             new BufferedImage(width, height, image.getType()));
+    }
+    
+    
+    /**
+     * Sets the random number generators' seed
+     * @param seed the seed 
+     */
+    public static void setRandomSeed(long seed) {
+        RandomMathArt.rng = new Random(seed);
     }
 }

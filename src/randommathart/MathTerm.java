@@ -25,9 +25,7 @@ public class MathTerm {
     
     private double num; //used only if type is NUMBER
     private int type;   //stores the type of the term
-    
-    private static Random rng = new Random(System.currentTimeMillis());
-    
+        
     
     /**
      * Constructs a term given the type
@@ -81,11 +79,11 @@ public class MathTerm {
      * @return Returns a random term
      */
     public static MathTerm getRandomTerm() {
-        int rand_type = rng.nextInt(MAX_TYPES);
+        int rand_type = RandomMathArt.rng.nextInt(MAX_TYPES);
         if (rand_type != 0)
             return new MathTerm(rand_type);
         else {
-            double rand_num = rng.nextDouble() * Math.PI;
+            double rand_num = RandomMathArt.rng.nextDouble() * Math.PI;
             return new MathTerm(rand_num);
         }
     }
@@ -96,11 +94,11 @@ public class MathTerm {
      * @return Returns either NUMBER, X, or Y
      */
     public static MathTerm getRandomTerminatingTerm() {
-        int rand_type = rng.nextInt(3); //can be num, X, or Y
+        int rand_type = RandomMathArt.rng.nextInt(3); //can be num, X, or Y
         if (rand_type != 0)
             return new MathTerm(rand_type);
         else {
-            double rand_num = rng.nextDouble() * Math.PI;
+            double rand_num = RandomMathArt.rng.nextDouble() * Math.PI;
             return new MathTerm(rand_num);
         }
     }
@@ -112,7 +110,7 @@ public class MathTerm {
      * @return Returns a random non-terminating math term
      */
     public static MathTerm getRandomNonTerminatingTerm() {
-        int rand_type = rng.nextInt(8 - 3 + 1) + 3;     //needs to be in range [3,8] inclusive
+        int rand_type = RandomMathArt.rng.nextInt(8 - 3 + 1) + 3;     //needs to be in range [3,8] inclusive
         return new MathTerm(rand_type);
     }
     

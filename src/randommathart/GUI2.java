@@ -37,7 +37,8 @@ public class GUI2 extends JFrame {
     protected static final int ACTUAL_ICON_RESOLUTION = 200;  //the size of the icon ON THE SCREEN
     protected static final int ICON_RESOLUTION = 80;         //the size of the generate picture
     protected static final int TICK_TIME = 2000;             //clock speed in ms
-    protected static final int NUM_PANELS = 15;       
+    protected static final int NUM_PANELS = 15;   
+    private   static final int INITIAL_EXPORT_SIZE = 1000;
     
     private boolean spacebarPressed = false;
     
@@ -159,7 +160,7 @@ public class GUI2 extends JFrame {
         exportSizeLabel.setText("Export Size:");
 
         resolutionTextField.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        resolutionTextField.setText("1920");
+        resolutionTextField.setText("" + INITIAL_EXPORT_SIZE);
         resolutionTextField.setBorder(BorderFactory.createEtchedBorder());
         resolutionTextField.setSelectedTextColor(new java.awt.Color(0, 0, 0));
         resolutionTextField.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -258,6 +259,8 @@ public class GUI2 extends JFrame {
         for(int i = panels.length - 1; i > 0; i--)
             panels[i].replaceWith(panels[i-1]);
         
+        //set constant seed for testing
+        RandomMathArt.setRandomSeed(1234L);
         //create new random math picture
         MathExpressions newMathExprs = RandomMathArt.createNewMathExprs();
         //BufferedImage image = RandomMathArt.createPicture(newMathExprs, ICON_RESOLUTION);

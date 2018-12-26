@@ -13,7 +13,6 @@ public class MathExpression {
     private List<MathTerm> terms;   //reverse polish notation list of terms?
     protected static final double PI = Math.PI;
     public static final int MAX_NON_TERMS = 200;
-    private static Random rng = new Random(System.currentTimeMillis());
     
     
     /**
@@ -99,7 +98,7 @@ public class MathExpression {
         //System.out.println(this);
 
         //add non-terms
-        int num_non_terms_to_add = 2 + rng.nextInt(MAX_NON_TERMS);
+        int num_non_terms_to_add = 2 + RandomMathArt.rng.nextInt(MAX_NON_TERMS);
         for (int n = 1; n <= num_non_terms_to_add; n++) {
             
             List<MathTerm> toAdd = getRandomSmallExpression();
@@ -110,7 +109,7 @@ public class MathExpression {
                 if (terms.get(i).getType() == MathTerm.PLACEHOLDER)
                     spotsToAdd.add(i);
             
-            int indexToAdd = spotsToAdd.get(rng.nextInt(spotsToAdd.size()));
+            int indexToAdd = spotsToAdd.get(RandomMathArt.rng.nextInt(spotsToAdd.size()));
             terms.remove(indexToAdd);
             terms.addAll(indexToAdd, toAdd);
             
