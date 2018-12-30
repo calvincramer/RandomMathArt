@@ -75,6 +75,15 @@ public class MathTerm {
     
     
     /**
+     * Returns true iff type is NUMBER
+     * @return true iff type is NUMBER
+     */
+    public boolean isNumber() {
+        return type == NUMBER;
+    }
+    
+    
+    /**
      * Returns a random term
      * @return Returns a random term
      */

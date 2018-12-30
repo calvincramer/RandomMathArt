@@ -51,7 +51,7 @@ public class RandomMathArt {
      */
     public static MathExpressions createNewMathExprs() {
         long start = System.currentTimeMillis();
-        MathExpressions toReturn = new MathExpressions("red", "green", "blue");
+        MathExpressions toReturn = new MathExpressions(true, "red", "green", "blue");
         System.out.println("Time create new math exprs: " + (System.currentTimeMillis() - start) + " ms");
         return toReturn;
     }
@@ -82,9 +82,9 @@ public class RandomMathArt {
         if (redExpr == null || grnExpr == null || bluExpr == null)
             throw new NullPointerException("Need to have 'red', 'green', and 'blue' math expressions");
         
-        int[] pixels = new int[raster.getWidth() * raster.getHeight() * 3];
-        int grnBandOffset = raster.getWidth() * raster.getHeight();
-        int bluBandOffset = grnBandOffset * 2;
+        //int[] pixels = new int[raster.getWidth() * raster.getHeight() * 3];
+        //int grnBandOffset = raster.getWidth() * raster.getHeight();
+        //int bluBandOffset = grnBandOffset * 2;
         
         double xCoord;
         double yCoord;
@@ -93,23 +93,23 @@ public class RandomMathArt {
                 xCoord = ((x * 1.0/resolution) * 2) - 1;
                 yCoord = ((y * 1.0/resolution) * 2) - 1;
                 
-                //int rgb = MathExpressions.getRGB(redExpr, grnExpr, bluExpr, xCoord, yCoord);                
-                //image.setRGB(x, y, rgb);
+                int rgb = MathExpressions.getRGB(redExpr, grnExpr, bluExpr, xCoord, yCoord);                
+                image.setRGB(x, y, rgb);
                 
                 //int[] rgb = MathExpressions.getRGBArr(redExpr, grnExpr, bluExpr, xCoord, yCoord);                
                 //raster.setPixel(x, y, rgb);
                 
-                //TODO: correctly buffer pixel writing faster than 250ms at 80x80 resolution
-                int[] rgb = MathExpressions.getRGBArr(redExpr, grnExpr, bluExpr, xCoord, yCoord);
-                pixels[y * raster.getWidth() + x] = rgb[0];
-                pixels[y * raster.getWidth() + x + grnBandOffset] = rgb[1];
-                pixels[y * raster.getWidth() + x + bluBandOffset] = rgb[2];
+                //TODO: correctly buffer pixel writing faster than 250ms at 80x80 resolution (50% power)
+                //int[] rgb = MathExpressions.getRGBArr(redExpr, grnExpr, bluExpr, xCoord, yCoord);
+                //pixels[y * raster.getWidth() + x] = rgb[0];
+                //pixels[y * raster.getWidth() + x + grnBandOffset] = rgb[1];
+                //pixels[y * raster.getWidth() + x + bluBandOffset] = rgb[2];
             }
         }
         
         
-        raster.setPixels(0, 0, raster.getWidth(), raster.getHeight(), pixels);
-        image.setData(raster);
+        //raster.setPixels(0, 0, raster.getWidth(), raster.getHeight(), pixels);
+        //image.setData(raster);
         System.out.println("Time create image: " + (System.currentTimeMillis() - start) + " ms");
         return image;
     }

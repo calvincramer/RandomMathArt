@@ -16,7 +16,7 @@ public class MathExpressions {
      * Creates a new math math expression for each expression name given
      * @param exprNames 
      */
-    public MathExpressions(String... exprNames) {        
+    public MathExpressions(boolean optimize, String... exprNames) {        
         //make map and name map
         this.exprs = new MathExpression[exprNames.length];
         this.exprNameMap = new HashMap<>();
@@ -24,16 +24,16 @@ public class MathExpressions {
             this.exprNameMap.put(exprNames[i], i);
         }
         
-        this.generateExprs();
+        this.generateExprs(optimize);
     }
     
     
     /**
      * Generates the entire array of trees
      */
-    private void generateExprs() {
+    private void generateExprs(boolean optimize) {
         for (int i = 0; i < exprs.length; i++)
-            exprs[i] = new MathExpression();
+            exprs[i] = new MathExpression(optimize);
     }
     
 
@@ -124,5 +124,42 @@ public class MathExpressions {
         int g = (int)((green + 1) * (255.0/2));
         int b = (int)((blue + 1) * (255.0/2));
         return new int[]{r, g, b};
+    }
+    
+    
+    public static void main(String[] args) {
+        RandomMathArt.setRandomSeed(1234L);
+        MathExpressions unop = new MathExpressions(false, "red", "green", "blue");
+        System.out.println("unop size: " + unop.getrExpr(0).getTerms().size());
+        
+        RandomMathArt.setRandomSeed(1234L);
+        MathExpressions opti = new MathExpressions(true, "red", "green", "blue");
+        System.out.println("opti size: " + opti.getrExpr(0).getTerms().size());
+        
+        //test how long it takes for optimized / unoptomized evaluation
+        final int MAX = 200;
+        final int REPEAT = 1;
+        
+        long startUnop = System.currentTimeMillis();
+        for (int r = 1; r <= REPEAT; r++) {
+        for (int x = 0; x <= MAX; x++) {
+        for (int y = 0; y <= MAX; y++) {
+            double eval = MathExpressions.getRGB(unop.getExpr("red"), unop.getExpr("green"), unop.getExpr("blue"), x, y);
+        }
+        }
+        }
+        double total = System.currentTimeMillis() - startUnop;
+        System.out.println("Unop: " + total + " avg: " + (total / REPEAT));
+        
+        long startOpti = System.currentTimeMillis();
+        for (int r = 1; r <= REPEAT; r++) {
+        for (int x = 0; x <= MAX; x++) {
+        for (int y = 0; y <= MAX; y++) {
+            double eval = MathExpressions.getRGB(opti.getExpr("red"), opti.getExpr("green"), opti.getExpr("blue"), x, y);
+        }
+        }
+        }
+        total = System.currentTimeMillis() - startOpti;
+        System.out.println("Opti: " + total + " avg: " + (total / REPEAT));
     }
 }

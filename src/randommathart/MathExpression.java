@@ -13,15 +13,76 @@ public class MathExpression {
     private List<MathTerm> terms;   //reverse polish notation list of terms?
     protected static final double PI = Math.PI;
     public static final int MAX_NON_TERMS = 200;
+    private List<Double> stack;     //used for evalaution
     
     
     /**
      * Generates a new random math expression
      */
-    public MathExpression() {
+    public MathExpression(boolean optimize) {
         this.terms = new ArrayList<>();
+        this.stack = new ArrayList<>();
         this.generateRandomExpression();
         //TODO: preprocess expression to make actual expression faster
+        if (optimize)
+            this.optimizeExpression();
+    }
+    
+    
+    /**
+     * Optimizes the expression to make evaluation the same, but faster
+     */
+    private void optimizeExpression() {
+        if (terms == null || terms.size() <= 1)
+            return;
+        
+        //repetedly check for patterns of NUM {sin|cos}
+        //and NUM NUM {+|*}
+        
+        boolean foundOpt = false;
+        do {
+            //System.out.println(this);
+            
+            for (int i = 0; i < terms.size() - 1; i++) {
+                //set flag false at start
+                foundOpt = false;
+                //NUM {sin|cos}
+                if (terms.get(i).isNumber() && 
+                           (terms.get(i+1).getType() == MathTerm.SIN
+                         || terms.get(i+1).getType() == MathTerm.COS
+                         || terms.get(i+1).getType() == MathTerm.TAN)) {
+                    foundOpt = true;
+                    Double num = terms.remove(i).getNumber();
+                    MathTerm op = terms.remove(i);
+                    Double res = Double.NaN;
+                    switch (op.getType()) {
+                        case MathTerm.SIN: res = Math.sin(num); break;
+                        case MathTerm.COS: res = Math.cos(num); break;
+                        case MathTerm.TAN: res = Math.tan(num); break;
+                    }
+                    terms.add(i, new MathTerm(res));
+                    break;
+                } 
+            }
+            for (int i = 0; i < terms.size() - 2; i++) {
+                //NUM NUM {+|*}
+                if (terms.get(i).isNumber() && terms.get(i + 1).isNumber() && 
+                           (terms.get(i+2).getType() == MathTerm.ADD
+                         || terms.get(i+2).getType() == MathTerm.MULT)) {
+                    foundOpt = true;
+                    Double num1 = terms.remove(i).getNumber();
+                    Double num2 = terms.remove(i).getNumber();
+                    MathTerm op = terms.remove(i);
+                    Double res = Double.NaN;
+                    switch (op.getType()) {
+                        case MathTerm.ADD: res = num1 + num2; break;
+                        case MathTerm.MULT: res = num1 * num2; break;
+                    }
+                    terms.add(i, new MathTerm(res));
+                    break;
+                }   
+            }
+        } while (foundOpt);
     }
     
     
@@ -30,7 +91,7 @@ public class MathExpression {
      * @return the value of the expression at (x,y)
      */
     public double evaluateExpression(double x, double y) {
-        List<Double> stack = new ArrayList<>(); //should only hold numbers, no operations
+        stack.clear(); //should only hold numbers, no operations
         for (MathTerm mt : terms) {
             int type = mt.getType();
             if (mt.isOperation()) {
@@ -150,6 +211,15 @@ public class MathExpression {
     
     
     /**
+     * Returns a copy of the terms of this expression
+     * @return a copy of the terms of this expression
+     */
+    public List<MathTerm> getTerms() {
+        return new ArrayList<>(this.terms);
+    }
+    
+    
+    /**
      * Math expression to string
      * @return 
      */
@@ -168,7 +238,7 @@ public class MathExpression {
      * @param args unused
      */
     public static void main(String[] args) {
-        MathExpression expr = new MathExpression();
+        MathExpression expr = new MathExpression(false);
         System.out.println("expression at (1,1): " + expr.evaluateExpression(1,1));
     }
 }
