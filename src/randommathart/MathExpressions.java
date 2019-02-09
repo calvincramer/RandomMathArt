@@ -44,7 +44,7 @@ public class MathExpressions {
      * @param exprIndex expression index
      * @return the math expression at the index
      */
-    public MathExpression getrExpr(int exprIndex) {
+    public MathExpression getExpr(int exprIndex) {
         if (exprIndex < 0 || exprIndex >= this.exprs.length) {
             System.out.println("Expression index is out of bounds");
             return null;
@@ -132,11 +132,11 @@ public class MathExpressions {
     public static void main(String[] args) {
         RandomMathArt.setRandomSeed(1234L);
         MathExpressions unop = new MathExpressions(false, "red", "green", "blue");
-        System.out.println("unop size: " + unop.getrExpr(0).getTerms().size());
+        System.out.println("unop size: " + unop.getExpr(0).getTerms().size());
 
         RandomMathArt.setRandomSeed(1234L);
         MathExpressions opti = new MathExpressions(true, "red", "green", "blue");
-        System.out.println("opti size: " + opti.getrExpr(0).getTerms().size());
+        System.out.println("opti size: " + opti.getExpr(0).getTerms().size());
 
         // Test how long it takes for optimized / unoptomized evaluation
         final int MAX = 200;
