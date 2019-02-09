@@ -1,30 +1,28 @@
 package randommathart;
 
-import java.util.Random;
-
 /**
  * Represents a single math term
  * @author CalvinLaptop
  */
 public class MathTerm {
-    //terminating types
+    // Terminating types
     public static final int NUMBER = 0;
     public static final int X      = 1;
     public static final int Y      = 2;
-    //non-terminating types
+    // Non-terminating types
     public static final int ADD    = 3;
     public static final int MULT   = 4;
     public static final int SIN    = 5;
     public static final int COS    = 6;
     public static final int TAN    = 7;
     public static final int POW    = 8;
-    //only used when generating a random expression
+    // Only used when generating a random expression
     public static final int PLACEHOLDER = 300; 
     
     public static final int MAX_TYPES = 9;
     
-    private double num; //used only if type is NUMBER
-    private int type;   //stores the type of the term
+    private double num; //Used only if type is NUMBER
+    private int type;   //Stores the type of the term
         
     
     /**
@@ -66,11 +64,12 @@ public class MathTerm {
     
     
     /**
-     * Determines whether the type is an operator (returns true) or not (returns false)
+     * Determines whether the type is an operator or not
      * @return 
      */
     public boolean isOperation() {
-        return type == ADD || type == MULT || type == SIN || type == COS || type == TAN || type == POW;
+        return type == ADD || type == MULT || type == SIN 
+                || type == COS || type == TAN || type == POW;
     }
     
     
@@ -119,7 +118,8 @@ public class MathTerm {
      * @return Returns a random non-terminating math term
      */
     public static MathTerm getRandomNonTerminatingTerm() {
-        int rand_type = RandomMathArt.rng.nextInt(8 - 3 + 1) + 3;     //needs to be in range [3,8] inclusive
+        // Needs to be in range [3,8] inclusive
+        int rand_type = RandomMathArt.rng.nextInt(8 - 3 + 1) + 3;     
         return new MathTerm(rand_type);
     }
     

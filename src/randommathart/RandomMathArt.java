@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
-//TODO DOCUMENTATION
+// TODO DOCUMENTATION
 public class RandomMathArt {
     
     protected static Random rng = new Random(System.currentTimeMillis());

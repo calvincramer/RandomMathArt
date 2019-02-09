@@ -23,25 +23,29 @@ import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 public class GUI2 extends JFrame {
-            
-    //colors
+
+    // Colors
     protected static final Color GRAY = new Color(90, 90, 90);
-    
-    private int numOfPictures = 0;  //counter variable for the number of picutes generated
-    private boolean running;        //is generating new pictures or not
-    private Timer timer;            //for the tick to get the next mathpicture every TICK_TIME ms
+    // Total number of pictures created
+    private int numOfPictures = 0;
+    // Generating new pictures or not
+    private boolean running;
+    // Repeating timer to create a new math picture
+    private Timer timer;
+    // The 15 panels that show the icons of the math pictures
+    private ImagePanel[] panels;
 
-    private ImagePanel[] panels;    //the 15 panels that show the icons of the math pictures
-
-    //important options
-    protected static final int ACTUAL_ICON_RESOLUTION = 200;  //the size of the icon ON THE SCREEN
-    protected static final int ICON_RESOLUTION = 80;         //the size of the generate picture
-    protected static final int TICK_TIME = 2000;             //clock speed in ms
-    protected static final int NUM_PANELS = 15;   
+    // The size of the icon ON THE SCREEN
+    protected static final int ACTUAL_ICON_RESOLUTION = 200;
+    // Ihe size of the generate picture
+    protected static final int ICON_RESOLUTION = 20;
+    // Clock speed in ms
+    protected static final int TICK_TIME = 2000;
+    protected static final int NUM_PANELS = 15;
     private   static final int INITIAL_EXPORT_SIZE = 1000;
-    
+
     private boolean spacebarPressed = false;
-    
+
     private JMenu exitButton;
     private JMenu exportButton;
     private JLabel exportSizeLabel;
@@ -50,23 +54,20 @@ public class GUI2 extends JFrame {
     private JTextField numOfPicturesLabel;
     private JMenu printTreeButton;
     private JTextField resolutionTextField;
-    private JMenu startStopButton;   
-    
+    private JMenu startStopButton;
+
     /**
      * Construct a frame to generate random math art
      */
     public GUI2() {
         myInitComponents();
-        
-        //center the frame
         centerFrame();
- 
-        //start timer
+        // Start timer
         running = false;
         restartTimer();
     }
-    
-    
+
+
     /**
      * Centers the frame in the window
      */
@@ -78,21 +79,19 @@ public class GUI2 extends JFrame {
         int y = (height / 2) - (this.getHeight() / 2);
         this.setBounds(x, y, this.getWidth(), this.getHeight());
     }
-    
-    
+
+
     /**
-     * Reinitialized the timer
+     * Reinitialize the timer
      */
     private void restartTimer() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
-            @Override public void run() {
-                tick();
-            }
+            @Override public void run() { tick(); }
         }, 0, TICK_TIME);
     }
-    
-    
+
+
     /**
      * Initialize the frame components
      */
@@ -114,8 +113,8 @@ public class GUI2 extends JFrame {
         this.setFocusable(true);
         this.setFocusTraversalKeysEnabled(false);
         this.getContentPane().setBackground(GRAY);
-        
-        //keyboard listener
+
+        // Keyboard listener
         this.addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 keyPressedEvent(e);
@@ -131,9 +130,9 @@ public class GUI2 extends JFrame {
         mainPanel.setMinimumSize(new Dimension (1044, 634));
         mainPanel.setMaximumSize(new Dimension (1044, 634));
         mainPanel.setPreferredSize(new Dimension (1044, 634));
-        
+
         mainPanel.setBackground(GRAY);
-        
+
         panels = new ImagePanel[NUM_PANELS];
         for (int i = 0; i < panels.length; i++) {
             panels[i] = new ImagePanel(null);
@@ -141,7 +140,7 @@ public class GUI2 extends JFrame {
             panels[i].setMaximumSize(new Dimension (200, 200));
             panels[i].setPreferredSize(new Dimension (200, 200));
             panels[i].setMinimumSize(new Dimension(200, 200));
-            
+
             panels[i].setBackground(GRAY);
 
             mainPanel.add(panels[i]);
@@ -182,7 +181,7 @@ public class GUI2 extends JFrame {
         });
         menuBar.add(exportButton);
         */
-        
+
         /*
         printTreeButton.setText("Print Tree");
         printTreeButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -192,7 +191,7 @@ public class GUI2 extends JFrame {
         });
         menuBar.add(printTreeButton);
         */
-        
+
         exitButton.setText("Exit");
         exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -202,7 +201,7 @@ public class GUI2 extends JFrame {
         menuBar.add(exitButton);
 
         setJMenuBar(menuBar);
-        
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -228,25 +227,25 @@ public class GUI2 extends JFrame {
                     .addComponent(resolutionTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 10, Short.MAX_VALUE))
         );
-        
+
         pack();
-    }    
-    
-    
+    }
+
+
     /**
      * Main tick to create a new math picture and to shift everything
      * Automatically exports images that run "off" the screen and are selected
      */
     private void tick() {
-        if (!running) 
+        if (!running)
             return;
-        
-        //check if last panel is selected
-        //start export if selected
+
         ImagePanel lastPanel = panels[NUM_PANELS - 1];
+        // Check if last panel is selected
+        // TODO: make this check into a method
         if (lastPanel != null && lastPanel.isSelected() && lastPanel.getMathExpressions() != null) {
             //stop the time when we are exporting the image, then resume after
-            timer.cancel();     
+            timer.cancel();
             //generate desired resolution image
             BufferedImage img = RandomMathArt.createPicture(lastPanel.getMathExpressions(), getExportResolution());
             //export image
@@ -254,36 +253,36 @@ public class GUI2 extends JFrame {
             //start timer again
             restartTimer();
         }
-        
-        //shift all of the icons one forward, except for the 0th icon
+
+        // Shift all of the icons one forward, except for the 0th icon
         for(int i = panels.length - 1; i > 0; i--)
             panels[i].replaceWith(panels[i-1]);
-        
-        //set constant seed for testing
+
+        // Setting constant seed for testing
         RandomMathArt.setRandomSeed(1234L);
-        //create new random math picture
+        // Create new random math picture
         MathExpressions newMathExprs = RandomMathArt.createNewMathExprs();
         //BufferedImage image = RandomMathArt.createPicture(newMathExprs, ICON_RESOLUTION);
         ImagePanel newFirstImagePanel = new ImagePanel(newMathExprs);
-        //place beginning image
+        // Place beginning image
         panels[0].replaceWith(newFirstImagePanel);
-        
-        //Update number of pictures generated label
+
+        // Update the number of pictures generated label
         numOfPictures++;
         numOfPicturesLabel.setText("Pictures: " + numOfPictures);
-        
-        //update frame to reflect changes
+
+        // Update frame to reflect changes
         this.repaint();
     }
-    
-    
+
+
     //<editor-fold defaultstate="collapsed" desc="Boring stuff">
     /**
      * For when any button is pressed down
      * @param e the KeyEvent
      */
     private void keyPressedEvent(KeyEvent e) {
-        //check if spacebar pressed
+        // Check if spacebar pressed
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             if (this.spacebarPressed == false) {
                 running = !running;
@@ -293,71 +292,72 @@ public class GUI2 extends JFrame {
         }
     }
 
-    
+
     /**
      * For when any button is released
      * @param e the KeyEvent
      */
     private void keyReleasedEvent(KeyEvent e) {
-        //check if spacebar released
+        // Check if spacebar released
         if (e.getKeyCode() == KeyEvent.VK_SPACE)
             this.spacebarPressed = false;
-    }                      
+    }
 
-    
+
     /**
      * Exit button
      * @param evt the Mouse event passed
      */
-    private void exitButtonMousePressed(java.awt.event.MouseEvent evt) {                                        
+    private void exitButtonMousePressed(java.awt.event.MouseEvent evt) {
+        // TODO: check if any image is being saved, join with the threads that are
         System.exit(0);
-    }                                       
+    }
 
-    
+
     /**
      * Starts / stops the generating of new math pictures
      * @param evt the Mouse event passed
      */
-    private void startStopButtonMousePressed(java.awt.event.MouseEvent evt) {                                             
+    private void startStopButtonMousePressed(java.awt.event.MouseEvent evt) {
         running = !running;
-    }                                            
+    }
 
-    
+
     /**
      * TODO: implement the export button (Issue #7)
      * @param evt the Mouse event passed
      */
-    private void exportButtonMousePressed(java.awt.event.MouseEvent evt) {                                          
+    private void exportButtonMousePressed(java.awt.event.MouseEvent evt) {
         System.out.println("EXPORT BUTTON DOES NOTHING RIGHT NOW");
-    }                                         
+    }
 
-    
+
     /**
      * Prints the math trees for each of the icons/panels
      * @param evt the Mouse event passed
      */
-    private void printTreeButtonMousePressed(java.awt.event.MouseEvent evt) {                                             
-        if (panels == null) 
+    private void printTreeButtonMousePressed(java.awt.event.MouseEvent evt) {
+        if (panels == null)
             return;
-        
+
         for (int i = 0; i < panels.length; i++) {
             if (panels[i] != null) {
                 ((ImagePanel) (panels[i].getComponents()[0])).getMathExpressions().printExpressions();
                 return;
             }
         }
-    }                                            
+    }
 
-    
+
     /**
      * Currently has no functionality
      * @param evt unused
      */
-    private void formKeyPressed(java.awt.event.KeyEvent evt) {                                
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {
         // TODO add your handling code here:
-    }                               
+    }
 
-    
+
     /**
      * Gets the export resolution from the text field
      * @return the number in the text field, or 1920 if the text is not a number
@@ -374,13 +374,13 @@ public class GUI2 extends JFrame {
         }
     }
     //</editor-fold>
-    
-    
+
+
     /**
      * Starting point
-     * @param args no use
+     * @param args not used
      */
     public static void main(String args[]) {
         new GUI2().setVisible(true);
-    }               
+    }
 }

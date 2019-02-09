@@ -2,11 +2,11 @@ package randommathart;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -15,32 +15,36 @@ import javax.swing.border.LineBorder;
  * The image is created by the given math expressions
  * The panel can be selected and deselected
  */
-public class ImagePanel 
+public class ImagePanel
         extends JPanel
         implements Runnable {
 
-    private MathExpressions mathExprs;    //math expressions for the image
-    private BufferedImage image;                //image
-    private BufferedImage scaledImage;          //scaled down image
-    private boolean selected;                   //selected or not
+    // Math expressions for the image
+    private MathExpressions mathExprs;
+    private BufferedImage image;
+    private BufferedImage scaledImage;
+    private boolean selected;
 
     private static final Color SELECTED_BORDER_COLOR = new Color(255, 255, 255);
     private static final LineBorder BORDER_SELECTED = new LineBorder(SELECTED_BORDER_COLOR, 5, false);
     private static final LineBorder BORDER_DESELECTED = new LineBorder(Color.YELLOW, 1, false);
-    
+
     private State STATE = State.CLEAR;
-            
     private enum State { CLEAR, LOADING, CROSS, HAVE_PICTURE }
-    
-    
+
+    private static final RenderingHints RENDERING_HINTS = new RenderingHints(
+             RenderingHints.KEY_ANTIALIASING,
+             RenderingHints.VALUE_ANTIALIAS_OFF);
+
+
     /**
      * Creates an empty image panel
      */
     public ImagePanel() {
         this(null, null, false);
     }
-    
-    
+
+
     /**
      * Constructs an Image panel by creating an image through the math expressions given
      * @param mathExprs math expressions
@@ -48,8 +52,8 @@ public class ImagePanel
     public ImagePanel(MathExpressions mathExprs) {
         this(mathExprs, null, false);
     }
-    
-    
+
+
     /**
      * Constructs an Image panel by creating an image through the math expressions given
      * and also starts out selected or not selected
@@ -59,8 +63,8 @@ public class ImagePanel
     public ImagePanel(MathExpressions mathExprs, boolean selected) {
         this(mathExprs, null, selected);
     }
-    
-    
+
+
     /**
      * Constructs an Image panel with an already created image.
      * @param mathExprs math tree associated with the image
@@ -69,10 +73,10 @@ public class ImagePanel
     public ImagePanel(MathExpressions mathExprs, BufferedImage image) {
         this(mathExprs, image, false);
     }
-    
-    
+
+
     /**
-     * Constructs an Image panel with an already created image, and selected or not
+     * Constructs an Image panel with an existing image
      * @param mathExprs math tree associated with the image
      * @param image already created image
      * @param selected selected (true), not selected (false)
@@ -80,8 +84,6 @@ public class ImagePanel
     public ImagePanel(MathExpressions mathExprs, BufferedImage image, boolean selected) {
         this.mathExprs = mathExprs;
         if (image == null && mathExprs != null) {
-            //TODO
-            //set image to loading image, or progress bar
             this.setState(State.LOADING);
             startImageCreationThread();
         }
@@ -89,23 +91,25 @@ public class ImagePanel
             this.setState(State.HAVE_PICTURE);
             setImage(image);
         }
-        //sets border to desired, also sets the border 
+        // Sets border to desired, also sets the border
         this.selected = selected;
         this.setBorder(this.selected ? BORDER_SELECTED : BORDER_DESELECTED);
-        //set mouse listener
+        // Set mouse listener
         this.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent evt) {
-                if (evt.getButton() == MouseEvent.BUTTON1) {    //hopefully left click
+                if (evt.getButton() == MouseEvent.BUTTON1) {
+                    // Left click
                     toggleSelected();
                 } else {
-                    toggleSelected();   //to be used for right clicks, if want different action in future
+                    // Right click
+                    toggleSelected();
                 }
             }
         });
         this.setOpaque(false);
     }
-   
-    
+
+
     /**
      * Starts construction of the image in another thread
      */
@@ -113,13 +117,14 @@ public class ImagePanel
         Thread creationThread = new Thread(this, "image creation thread");
         creationThread.start();
         try {
-            creationThread.join();      //don't want to use join, because it gets rid of all benefits of multithreading
+            // Don't want to use join, because it gets rid of all benefits of multithreading
+            creationThread.join();
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
     }
 
-    
+
     /**
      * Sets the image of this panel, and also sets a scaled image of size GUI2.ACTUAL_ICON_RESOLUTION
      * @param image image to use
@@ -127,8 +132,8 @@ public class ImagePanel
     public synchronized void setImage(BufferedImage image) {
         this.setImage(image, null);
     }
-    
-    
+
+
     /**
      * Sets the image of this panel, and also sets a scaled image of size GUI2.ACTUAL_ICON_RESOLUTION
      * @param image image to use
@@ -142,7 +147,7 @@ public class ImagePanel
         this.setState((image == null) ? State.CLEAR : State.HAVE_PICTURE);
     }
 
-    
+
     /**
      * Returns the maths expressions associated with the image
      * @return the maths expressions associated with the image
@@ -151,7 +156,7 @@ public class ImagePanel
         return mathExprs;
     }
 
-    
+
     /**
      * Returns whether the panel is selected
      * @return whether the panel is selected
@@ -160,20 +165,20 @@ public class ImagePanel
         return selected;
     }
 
-    
+
     /**
      * Sets whether this panel is selected
      * @param selected selected (true), not selected (false)
      */
     public void setSelected(boolean selected) {
-        if (this.selected == selected) 
+        if (this.selected == selected)
             return;  //don't call setBorder if nothing will change
-        
+
         this.selected = selected;
         this.setBorder(this.selected ? BORDER_SELECTED : BORDER_DESELECTED);
     }
-    
-    
+
+
     /**
      * Toggles the selection of the panel
      */
@@ -184,41 +189,44 @@ public class ImagePanel
             this.setSelected( !this.selected );
     }
 
-    
-    //TODO: can do antialiasing here?
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHints(RENDERING_HINTS);
+
         switch (this.STATE) {
             case CLEAR: return;
-            case LOADING: 
-                g.setColor(Color.WHITE);
-                g.fillRect(0, 0, this.getWidth(), this.getHeight());
+            case LOADING:
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, this.getWidth(), this.getHeight());
                 break;
             case CROSS: {
-                g.setColor(Color.RED);
-                g.drawLine(0, 0, this.getWidth(), this.getHeight());
-                g.drawLine(0, this.getHeight(), this.getWidth(), 0);
+                g2.setColor(Color.RED);
+                g2.drawLine(0, 0, this.getWidth(), this.getHeight());
+                g2.drawLine(0, this.getHeight(), this.getWidth(), 0);
                 break;
             }
             case HAVE_PICTURE: {
-                if (scaledImage != null)    g.drawImage(scaledImage, 0, 0, null);  
-                else if (image != null)     g.drawImage(image, 0, 0, null);
+                if (scaledImage != null)    g2.drawImage(scaledImage, 0, 0, null);
+                else if (image != null)     g2.drawImage(image, 0, 0, null);
                 else {} //default no picture picture
                 break;
             }
             default: {
+                // TODO: proper error handling
                 System.err.println("bad image panel state");
                 break;
             }
         }
     }
-    
-    
+
+
     /**
      * Replaces all of the data of this with the data from other
-     * @param other 
+     * @param other
      */
     public void replaceWith(ImagePanel other) {
         this.setImage(other.image, other.scaledImage);
@@ -226,38 +234,36 @@ public class ImagePanel
         this.setSelected(other.selected);
     }
 
-    
+
     /**
      * Create image from math expressions
      */
     @Override
     public void run() {
-        //System.out.println("running thread!");
-        
         if (this.image != null) {
+            // TODO: proper error handling
             //System.out.println("already have image, stopping thead");
             return;
         }
-        
+
         this.setState(State.LOADING);
-        
+
         if (this.mathExprs != null) {
-            //System.out.println("creating image in thread");
+            // Calculate the picture
             BufferedImage image = RandomMathArt.createPicture(mathExprs, GUI2.ICON_RESOLUTION);
             this.setImage(image);
             this.repaint();
         }
-        
+
         this.setState(State.HAVE_PICTURE);
-        
-        //System.out.println("done running thread\n");
+        // Finished thread
     }
-    
-    
+
+
     /**
      * Sets the state of this image panel
      * Thread safe
-     * @param state new state to be in 
+     * @param state new state to be in
      */
     private synchronized void setState(ImagePanel.State state) {
         this.STATE = state;

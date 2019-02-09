@@ -16,6 +16,7 @@
             <word>exprs</word>
             <word>generators'</word>
             <word>iff</word>
+            <word>placeholders</word>
         </spellchecker-wordlist>
     </configuration>
 </project>
