@@ -259,7 +259,7 @@ public class GUI2 extends JFrame {
             panels[i].replaceWith(panels[i-1]);
 
         // Setting constant seed for testing
-        RandomMathArt.setRandomSeed(1234L);
+        // RandomMathArt.setRandomSeed(1234L);
         // Create new random math picture
         MathExpressions newMathExprs = RandomMathArt.createNewMathExprs();
         //BufferedImage image = RandomMathArt.createPicture(newMathExprs, ICON_RESOLUTION);
